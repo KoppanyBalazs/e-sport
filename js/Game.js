@@ -12,10 +12,10 @@ class Game{
     }
 
     is_valid_name(name){
-        return name.length >= 4
+        return name.length >= 4 
     }
     set_name(name){
-        if(is_valid_name(name)){
+        if(this.is_valid_name(name)){
             this.#name = name
         }
     }
@@ -66,7 +66,7 @@ class Game{
     }
 
     remove_empty(){
-        var stat_values = this.get_stats().values()
+        var stat_values = this.get_stats().values
         var output_values = []
         for(let i; i < stat_values; i++){
             if(stat_values[i].length > 0){
