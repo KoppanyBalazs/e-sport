@@ -49,10 +49,10 @@ class Player {
 
     set_pay(val) {
         if (val < 0 || val > 1_000_000) {
-            this.#val = 0;
+            this.#pay = 0;
         }
         else {
-            this.#val = val;
+            this.#pay = val;
         }
     }
 
