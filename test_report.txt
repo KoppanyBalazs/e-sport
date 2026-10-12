@@ -1,0 +1,2 @@
+#1 - Player class:
+    - to_string hiba: game class nevét (get_name()) lenne legoptimálisabb kiírni
