@@ -77,6 +77,6 @@ class Player {
     }
 
     to_string() {
-        return `{${this.get_name()};${this.get_nick()};${this.get_id()};${this.get_game()};${this.get_pay()}}`
+        return `{${this.get_name()};${this.get_nick()};${this.get_id()};${this.get_game().get_name()};${this.get_pay()}}`
     }
 }
