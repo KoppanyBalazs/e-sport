@@ -1,6 +1,5 @@
 class Game{
     #name
-    #starting_pay
     #stats
     #max_players_in_round
 
@@ -62,22 +61,23 @@ class Game{
         if(index < this.get_stats()[stat_name].length && Number.isInteger(value)){
             this.get_stats()[stat_name].splice(index, 1)
             return true
-        }        
+        }
+        return false;
     }
 
     remove_empty(){
-        var stat_values = this.get_stats().values
+        var stat_values = Object.values(this.get_stats())
         var output_values = []
-        for(let i; i < stat_values; i++){
+        for(let i = 0; i < stat_values.length; i++){
             if(stat_values[i].length > 0){
-                output_values.push(stat_values)
+                output_values.push(stat_values[i])
             }
         }
         return output_values
     }
 
     to_string(){
-        return `{${this.get_name()};${(this.remove_empty().length > 0) ? this.get_stats() : "Üres"};${this.get_max_players_in_round()}}`
+        return `{${this.get_name()};${(this.remove_empty().length > 0) ? JSON.stringify(this.remove_empty()) : "Üres"};${this.get_max_players_in_round()}}`
 
     }
 }
