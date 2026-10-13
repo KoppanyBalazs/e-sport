@@ -27,8 +27,8 @@ class Game{
     }
 
     set_stats(stat_names){
-        if(Array.isArray()){
-            for(let i; i < stat_names.length; i++){
+        if(Array.isArray(stat_names)){
+            for(let i = 0; i < stat_names.length; i++){
                 this.#stats[stat_names[i]] = []
             }
         }

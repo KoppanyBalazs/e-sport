@@ -2,7 +2,7 @@ cs2 = new Game("Counter Strike 2", ["kills", "damage", "assists", "plants", "def
 valo = new Game("Valorant", ["kills", "damage", "assists", "spikes", "defuses"], 5)
 bela = new Player("Kovács béla", "belus123", 0, 120_000, cs2)
 
-console.assert(bela.to_string() === "{Kovács Béla;belus123;0;120000;Counter Strike 2}", `Nem megfelelő konstruktor, vagy to_string() : ${bela.to_string()}`)
+console.assert(bela.to_string() === "{Kovács Béla;belus123;0;Counter Strike 2;120000}", `Nem megfelelő konstruktor, vagy to_string() : ${bela.to_string()}`)
 
 bela.set_name("Béla")
 console.assert(bela.get_name() === "Ismeretlen játékos", `Hibás input ellenőrzés a set_name()-ben : ${bela.get_name()}`)
