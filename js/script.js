@@ -10,6 +10,7 @@ function write(viewed){
     output_accordion = document.querySelector(".output")
     output_accordion.innerHTML = ""
 
+    //Játéktól függően, accordion-item-ek hozzáadása
     if(viewed == "valorant"){
         for(let i = 0; i < valorant_players.length; i++){
             //TODO: statok kiírása
@@ -60,6 +61,7 @@ function write(viewed){
 
 write(viewed)
 
+//Játék-nézet váltás
 document.querySelector(".valorant_btn").addEventListener("click", () => {
     viewed = "valorant"
     document.querySelector(".valorant_btn").classList.add("active")
