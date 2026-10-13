@@ -1,2 +1,6 @@
 #1 - Player class:
     - to_string hiba: game class nevét (get_name()) lenne legoptimálisabb kiírni
+
+10.13
+#2 - Game class:
+    - add_stat hiba: ha először nagyobb indexhez akarunk statot adni, mint ami már meg van adva, akkor automatikusan a legközelebbi indexre tárolja el az adatot. 
