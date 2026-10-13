@@ -95,7 +95,7 @@ class Player {
     get_contracttime() {
         var now = new Date();
 
-        var from = Math.floor((dateTime.getTime() - now.getTime()) / 1000);
+        var from = Math.floor((this.#contracttime.getTime() - now.getTime()) / 1000);
 
         return (from < 0) ? "Lejárt" : from;
     }
