@@ -4,6 +4,7 @@ class Player {
     #id;
     #pay;
     #game;
+    #contracttime;
 
     constructor(name, nick, id, pay, game) {
         this.set_name(name);
@@ -56,6 +57,22 @@ class Player {
         }
     }
 
+    set_contracttime(date, time) {
+        // date formátum: yyyy-mm-dd
+        // time formátum: hh:mm
+        var dateParts = date.split("-");
+        var timeParts = time.split(":");
+
+        this.#contracttime = new Date(
+            parseInt(dateParts[0]),
+            parseInt(dateParts[1]) - 1,
+            parseInt(dateParts[2]),
+            parseInt(timeParts[0]),
+            parseInt(timeParts[1])
+        );
+
+    }
+
     set_game(game) {
         this.#game = game;
     }
@@ -75,8 +92,15 @@ class Player {
     get_nick() {
         return this.#nick;
     }
+    get_contracttime() {
+        var now = new Date();
+
+        var from = Math.floor((dateTime.getTime() - now.getTime()) / 1000);
+
+        return (from < 0) ? "Lejárt" : from;
+    }
 
     to_string() {
-        return `{${this.get_name()};${this.get_nick()};${this.get_id()};${this.get_game().get_name()};${this.get_pay()}}`
+        return `{${this.get_name()};${this.get_nick()};${this.get_id()};${this.get_game().get_name()};${this.get_pay()};${this.get_contracttime()}}`
     }
 }
