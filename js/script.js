@@ -179,10 +179,24 @@ var new_time = document.querySelector(".add-time");
 
 document.querySelector(".add-modalbtn").addEventListener('click', () => {
     add_modal.show();
+    new_name.classList.remove("is-invalid")
+    new_nick.classList.remove("is-invalid")
 })
 
+function is_valid_input() {
+    var name_valid = new_name.value.trim().length > 5
+    var nick_valid = new_nick.value.trim().length > 2
+
+    new_name.classList.toggle("is-invalid", !name_valid)
+    new_nick.classList.toggle("is-invalid", !nick_valid)
+
+    return name_valid && nick_valid && date_valid
+}
 
 document.querySelector(".add-btn").addEventListener('click', () => {
+    if (!is_valid_input()) {
+        return;
+    } else {
         var date_parts = new_date.value.split("-");
         var time_parts = new_time.value.split(":");
         var date_time = new Date(
@@ -203,6 +217,7 @@ document.querySelector(".add-btn").addEventListener('click', () => {
 
         add_modal.hide();
         write(viewed);
+    }
 })
 
 
