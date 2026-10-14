@@ -6,12 +6,13 @@ class Player {
     #game;
     #contracttime;
 
-    constructor(name, nick, id, pay, game) {
+    constructor(name, nick, id, pay, game, date_time) {
         this.set_name(name);
         this.set_nick(nick);
         this.set_id(id);
         this.set_pay(pay);
         this.set_game(game);
+        this.set_contracttime(date_time);
     }
 
     set_name(name) {
@@ -57,20 +58,8 @@ class Player {
         }
     }
 
-    set_contracttime(date, time) {
-        // date formátum: yyyy-mm-dd
-        // time formátum: hh:mm
-        var dateParts = date.split("-");
-        var timeParts = time.split(":");
-
-        this.#contracttime = new Date(
-            parseInt(dateParts[0]),
-            parseInt(dateParts[1]) - 1,
-            parseInt(dateParts[2]),
-            parseInt(timeParts[0]),
-            parseInt(timeParts[1])
-        );
-
+    set_contracttime(date_time) {
+        this.#contracttime = date_time;
     }
 
     set_game(game) {

@@ -28,8 +28,8 @@ rocket_league.add_stat_value("matches", 0, 1)
 var viewed = "valorant"
 
 //chart létrehozása, ha a felhasználó megnyitja az accordiont
-function new_chart(id){
-    if(viewed == "valorant"){
+function new_chart(id) {
+    if (viewed == "valorant") {
 
         //valorant chartja
         valorant_chart = new Chart(
@@ -55,7 +55,7 @@ function new_chart(id){
         valorant_chart.resize()
         valorant_chart.update()
     }
-    else if(viewed = "rocket_league"){
+    else if (viewed = "rocket_league") {
 
         //rocket league chartja
         rocket_league_chart = new Chart(
@@ -83,16 +83,16 @@ function new_chart(id){
     }
 }
 
-function write(viewed){
+function write(viewed) {
     output_accordion = document.querySelector(".output")
     output_accordion.innerHTML = ""
 
     //Játéktól függően, accordion-item-ek hozzáadása
-    if(viewed == "valorant"){
-        for(let i = 0; i < valorant_players.length; i++){
+    if (viewed == "valorant") {
+        for (let i = 0; i < valorant_players.length; i++) {
 
-            output_accordion.innerHTML += 
-            `
+            output_accordion.innerHTML +=
+                `
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" onclick = "new_chart(${valorant_players[i].get_id()})" data-bs-toggle="collapse"
@@ -119,11 +119,11 @@ function write(viewed){
             `
         }
     }
-    else if(viewed == "rocket_league"){
-        for(let i = 0; i < rocket_league_players.length; i++){
+    else if (viewed == "rocket_league") {
+        for (let i = 0; i < rocket_league_players.length; i++) {
 
-            output_accordion.innerHTML += 
-            `
+            output_accordion.innerHTML +=
+                `
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" onclick = "new_chart(${rocket_league_players[i].get_id()})" data-bs-toggle="collapse"
@@ -148,7 +148,7 @@ function write(viewed){
                 </div>
             </div>
             `
-        }      
+        }
     }
 }
 
@@ -168,4 +168,50 @@ document.querySelector(".rocket_league_btn").addEventListener("click", () => {
     document.querySelector(".valorant_btn").classList.remove("active")
     write(viewed)
 })
+
+/////////////////add-modal
+
+var new_name = document.querySelector(".add-name");
+var new_nick = document.querySelector(".add-nick");
+var new_pay = document.querySelector(".add-pay");
+var new_date = document.querySelector(".add-date");
+var new_time = document.querySelector(".add-time");
+
+document.querySelector(".add-modalbtn").addEventListener('click', () => {
+    add_modal.show();
 })
+
+
+document.querySelector(".add-btn").addEventListener('click', () => {
+        var date_parts = new_date.value.split("-");
+        var time_parts = new_time.value.split(":");
+        var date_time = new Date(
+            parseInt(date_parts[0]),
+            parseInt(date_parts[1]) - 1,
+            parseInt(date_parts[2]),
+            parseInt(time_parts[0]),
+            parseInt(time_parts[1])
+        );
+
+        if (viewed == "valorant") {
+            var p = new Player(new_name.value, new_nick.value, valorant_players.length, new_pay.value, valorant, date_time);
+            valorant_players.push(p);
+        } else if (viewed == "rocket_league") {
+            var p = new Player(new_name.value, new_nick.value, rocket_league_players.length, new_pay.value, rocket_league, date_time);
+            rocket_league_players.push(p);
+        }
+
+        add_modal.hide();
+        write(viewed);
+})
+
+
+const rangeInput = document.getElementById('range4');
+const rangeOutput = document.getElementById('rangeValue');
+
+rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
+
+rangeInput.addEventListener('input', function () {
+    rangeOutput.textContent = Intl.NumberFormat().format(this.value) + " Ft";
+});
+
