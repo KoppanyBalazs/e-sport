@@ -170,6 +170,15 @@ document.querySelector(".rocket_league_btn").addEventListener("click", () => {
 })
 
 /////////////////add-modal
+const rangeInput = document.getElementById('range4');
+const rangeOutput = document.getElementById('rangeValue');
+
+rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
+
+rangeInput.addEventListener('input', function () {
+    rangeOutput.textContent = Intl.NumberFormat().format(this.value) + " Ft";
+});
+
 
 var new_name = document.querySelector(".add-name");
 var new_nick = document.querySelector(".add-nick");
@@ -189,6 +198,11 @@ document.querySelector(".add-modalbtn").addEventListener('click', () => {
 
 function is_valid_input() {
     var name_valid = new_name.value.trim().length > 5
+    for (let i = 0; i < new_name.value.length; i++) {
+        if ("0123456789".includes(new_name.value[i])) {
+            name_valid = false;
+        }
+    }
     var nick_valid = new_nick.value.trim().length > 2
 
     var date_time = new Date(new_date.value + "T" + new_time.value)
@@ -227,16 +241,10 @@ document.querySelector(".add-btn").addEventListener('click', () => {
 
         add_modal.hide();
         write(viewed);
+
+        new_name.value = new_nick.value = new_date.value = "";
+        new_pay.value = 20000;
+        rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
     }
 })
-
-
-const rangeInput = document.getElementById('range4');
-const rangeOutput = document.getElementById('rangeValue');
-
-rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
-
-rangeInput.addEventListener('input', function () {
-    rangeOutput.textContent = Intl.NumberFormat().format(this.value) + " Ft";
-});
 
