@@ -176,19 +176,29 @@ var new_nick = document.querySelector(".add-nick");
 var new_pay = document.querySelector(".add-pay");
 var new_date = document.querySelector(".add-date");
 var new_time = document.querySelector(".add-time");
+var date_error = document.querySelector(".date-error")
 
 document.querySelector(".add-modalbtn").addEventListener('click', () => {
     add_modal.show();
     new_name.classList.remove("is-invalid")
     new_nick.classList.remove("is-invalid")
+    new_date.classList.remove("is-invalid")
+    new_time.classList.remove("is-invalid")
+    date_error.classList.remove("d-block")
 })
 
 function is_valid_input() {
     var name_valid = new_name.value.trim().length > 5
     var nick_valid = new_nick.value.trim().length > 2
 
+    var date_time = new Date(new_date.value + "T" + new_time.value)
+    var date_valid = new_date.value != "" && new_time.value != "" && date_time > new Date()
+
     new_name.classList.toggle("is-invalid", !name_valid)
     new_nick.classList.toggle("is-invalid", !nick_valid)
+    new_date.classList.toggle("is-invalid", !date_valid)
+    new_time.classList.toggle("is-invalid", !date_valid)
+    date_error.classList.toggle("d-block", !date_valid)
 
     return name_valid && nick_valid && date_valid
 }
