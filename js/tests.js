@@ -38,8 +38,8 @@ valo.add_stat_value("defuses", 0, 2)
 
 console.assert(valo.to_string() === "{Valorant;[[18],[2]];5}", "Hiba az add_stat_value() metódus működésében! (nem adódnak hozzá a statok)")
 
-console.assert(valo.remove_stat_value("kills", 0, 3), "Hiba a remove_stat_value() metódusban! (nem távolít el valid értéket)")
-console.assert(!valo.remove_stat_value("kills", 0, 3), "Hiba a remove_stat_value() metódusban! (eltávolít invalid értéket)")
+console.assert(valo.remove_stat_value("kills", 0), "Hiba a remove_stat_value() metódusban! (nem távolít el valid értéket)")
+console.assert(!valo.remove_stat_value("kills", 0), "Hiba a remove_stat_value() metódusban! (eltávolít invalid értéket)")
 console.log(valo.get_stats()["kills"]) //--> 12, 30, 15
 
 valo.add_stat_value("kills", 2, 80)

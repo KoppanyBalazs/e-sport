@@ -7,6 +7,8 @@ const rocket_league_players = [new Player("Nagy Feró", "nyolc_ora_munka", 0, 10
 var valorant_chart = NaN
 var rocket_league_chart = NaN
 
+const add_modal = new bootstrap.Modal(".add-modal")
+
 //Teszt adat feltöltés
 valorant.add_stat_value("kills", 0, 15)
 valorant.add_stat_value("assists", 0, 10)
@@ -37,8 +39,9 @@ function new_chart(id){
                 data: {//adatok
                     datasets: [{
                         data: [
-                            valorant.get_stats()["wins"][id], //wins
-                            valorant.get_stats()["matches"][id] - valorant.get_stats()["wins"][id]]//nem tároljuk a vereségeket, ezért a matches - win a vereségek száma
+                            valorant.get_stats_value("wins", id), //wins
+                            valorant.get_stats_value("matches", id) - valorant.get_stats_value("wins", id)//nem tároljuk a vereségeket, ezért a matches - win a vereségek száma
+                        ]
                     }],
                     labels: ["wins", "losses"]
                 },
@@ -62,8 +65,9 @@ function new_chart(id){
                 data: {//adatok
                     datasets: [{
                         data: [
-                            rocket_league.get_stats()["wins"][id], //wins
-                            rocket_league.get_stats()["matches"][id] - rocket_league.get_stats()["wins"][id]]//nem tároljuk a vereségeket, ezért a matches - win a vereségek száma
+                            rocket_league.get_stats_value("wins", id), //wins
+                            rocket_league.get_stats_value("matches", id) - rocket_league.get_stats_value("wins", id)//nem tároljuk a vereségeket, ezért a matches - win a vereségek száma
+                        ]
                     }],
                     labels: ["wins", "losses"]
                 },
@@ -101,10 +105,10 @@ function write(viewed){
                         <div class="row g-2">
                             <div class = "d-flex flex-row">
                                 <div class = "p-2 flex-grow-1">
-                                <p class = "p-2 fw-bold">Spikes: ${valorant.get_stats()["spikes"][valorant_players[i].get_id()]}</p>
-                                <p class = "p-2 fw-bold">Defuses: ${valorant.get_stats()["defuses"][valorant_players[i].get_id()]}</p>
-                                <p class = "p-2 fw-bold">K/D: ${valorant.get_stats()["kills"][valorant_players[i].get_id()] / valorant.get_stats()["deaths"][valorant_players[i].get_id()]}</p>
-                                <p class = "p-2">Assists: ${valorant.get_stats()["assists"][valorant_players[i].get_id()]}</p>
+                                <p class = "p-2 fw-bold">Spikes: ${valorant.get_stats_value("spikes", valorant_players[i].get_id())}</p>
+                                <p class = "p-2 fw-bold">Defuses: ${valorant.get_stats_value("defuses", valorant_players[i].get_id())}</p>
+                                <p class = "p-2 fw-bold">K/D: ${valorant.get_stats_value("kills", valorant_players[i].get_id()) / valorant.get_stats_value("deaths", valorant_players[i].get_id())}</p>
+                                <p class = "p-2">Assists: ${valorant.get_stats_value("assists", valorant_players[i].get_id())}</p>
                                 </div>
                                 <div class = "p-2 flex-grow-1"><canvas class = "chart-${valorant_players[i].get_id()}"><canvas></div>
                             </div>
@@ -132,10 +136,10 @@ function write(viewed){
                         <div class="row g-2">
                             <div class = "d-flex flex-row">
                                 <div class = "p-2 flex-grow-1">
-                                <p class = "p-2 fw-bold">Goals: ${rocket_league.get_stats()["goals"][rocket_league_players[i].get_id()]}</p>
-                                <p class = "p-2 fw-bold">Saves: ${rocket_league.get_stats()["saves"][rocket_league_players[i].get_id()]}</p>
-                                <p class = "p-2 fw-bold">MVPs: ${rocket_league.get_stats()["mvps"][rocket_league_players[i].get_id()]}</p>
-                                <p class = "p-2">Assists: ${rocket_league.get_stats()["assists"][rocket_league_players[i].get_id()]}</p>
+                                <p class = "p-2 fw-bold">Goals: ${rocket_league.get_stats_value("goals", rocket_league_players[i].get_id())}</p>
+                                <p class = "p-2 fw-bold">Saves: ${rocket_league.get_stats_value("saves", rocket_league_players[i].get_id())}</p>
+                                <p class = "p-2 fw-bold">MVPs: ${rocket_league.get_stats_value("mvps", rocket_league_players[i].get_id())}</p>
+                                <p class = "p-2">Assists: ${rocket_league.get_stats_value("assists", rocket_league_players[i].get_id())}</p>
                                 </div>
                                 <div class = "p-2 flex-grow-1"><canvas class = "chart-${rocket_league_players[i].get_id()}"><canvas></div>
                             </div>
@@ -163,4 +167,5 @@ document.querySelector(".rocket_league_btn").addEventListener("click", () => {
     document.querySelector(".rocket_league_btn").classList.add("active")
     document.querySelector(".valorant_btn").classList.remove("active")
     write(viewed)
+})
 })
