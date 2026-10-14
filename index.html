@@ -71,7 +71,7 @@
     <footer class="text-center">
         <p>&copy; 2025 bankitatabanya.hu &bull; Minden jog fenntartva!</p>
     </footer>
-    <div class="modal add-modal fade" tabindex="-1">
+    <div class="modal add-modal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-success">
@@ -94,7 +94,7 @@
                             <label class="form-label">Fizetés</label>
                             <input type="range" class="form-range add-pay" min="0" max="1000000" value="20000" step="1000"
                                 id="range4">
-                            <output for="range4" id="rangeValue" aria-hidden="true"></output>
+                            <output for="range4" id="rangeValue"></output>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Szerződés lejárta</label>
@@ -112,7 +112,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
-                    <button type="button" class="btn btn-success add-btn">Játékos
+                    <button type="button" class="btn btn-success add-btn" data-bs-dismiss="modal">Játékos
                         mentése</button>
                 </div>
             </div>
@@ -135,7 +135,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
-                    <button type="button" class="btn btn-primary sim-btn" data-bs-dismiss="modal">Játékos mentése</button>
+                    <button type="button" class="btn btn-primary sim-btn" data-bs-dismiss="modal">Szimuláció indítása</button>
                 </div>
             </div>
         </div>
