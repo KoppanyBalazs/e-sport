@@ -250,11 +250,12 @@ document.querySelector(".sim-modalbtn").addEventListener("click", () => {
     for(let i = 0; i < players_used.length; i++){
         inputs.innerHTML += 
         `
-        <div class = "p-2 d-flex flex-row justify-content-center form-check">
-            <p class = "p-1 flex-grow-1">${i + 1}. Játékos:<p>
+        <div class = "p-2 d-flex flex-row flex-wrap justify-content-center form-check">
+            <p class = "p-1 flex-grow-1">${i + 1}. Játékos:</p>
             <p class = "p-1 flex-grow-1">${players_used[i].get_nick()}</p>
             <p class = "p-1 flex-grow-1">Játszott:</p>
-            <input type = "checkbox" value = "${i}" class = "form-control index-${i} form-check-input">
+            <input type = "checkbox" value = "${i}" class = "index-${i} form-check-input">
+            <div class="invalid-feedback w-100 p-1">Több játékost mint ${games[viewed].get_max_players_in_round()} játékos!</div>
         </div>
         `
     }
@@ -270,37 +271,45 @@ document.querySelector(".sim-btn").addEventListener("click", () => {
     for(let i = 0; i < players_used.length; i++){
         checkbox = document.querySelector(`.index-${i}`)
         if(checkbox.checked){
-            inputs.push(Number.parseInt(checkbox.value))
+            inputs.push(checkbox)
+            checkbox.classList.remove("is-invalid")
         }
     }
 
+    var input_len =inputs.length
     var id = -1
-    for(let i = 0; i < inputs.length; i++){
-        id = inputs[i]
-        if(! viewed){
-            add_in_bulk(viewed, id, [
-                        games[viewed].get_stats_value("kills", id) + Math.floor(Math.random() * 31),
-                        games[viewed].get_stats_value("assists", id) + Math.floor(Math.random() * 31),
-                        games[viewed].get_stats_value("deaths", id) + Math.floor(Math.random() * 31),
-                        games[viewed].get_stats_value("spikes", id) + Math.floor(Math.random() * 9),
-                        games[viewed].get_stats_value("defuses", id) + Math.floor(Math.random() * 9),
-                        games[viewed].get_stats_value("wins", id) + Math.floor(Math.random() * 2),
-                        games[viewed].get_stats_value("matches", id) + 1,
-        ])
+    if(input_len <= games[viewed].get_max_players_in_round()){
+        for(let i = 0; i < input_len; i++){
+            id = Number.parseInt(inputs[i].value)
+            if(! viewed){
+                add_in_bulk(viewed, id, [
+                            games[viewed].get_stats_value("kills", id) + Math.floor(Math.random() * 31),
+                            games[viewed].get_stats_value("assists", id) + Math.floor(Math.random() * 31),
+                            games[viewed].get_stats_value("deaths", id) + Math.floor(Math.random() * 31),
+                            games[viewed].get_stats_value("spikes", id) + Math.floor(Math.random() * 9),
+                            games[viewed].get_stats_value("defuses", id) + Math.floor(Math.random() * 9),
+                            games[viewed].get_stats_value("wins", id) + Math.floor(Math.random() * 2),
+                            games[viewed].get_stats_value("matches", id) + 1,
+            ])
+            }
+            else{
+                add_in_bulk(viewed, id, [
+                            games[viewed].get_stats_value("goals", id) + Math.floor(Math.random() * 21),
+                            games[viewed].get_stats_value("assists", id) + Math.floor(Math.random() * 21),
+                            games[viewed].get_stats_value("saves", id) + Math.floor(Math.random() * 21),
+                            games[viewed].get_stats_value("mvps", id) + Math.floor(Math.random() * 2.1),
+                            games[viewed].get_stats_value("wins", id) + Math.floor(Math.random() * 2),
+                            games[viewed].get_stats_value("matches", id) + 1,
+            ])
+            }
         }
-        else{
-            add_in_bulk(viewed, id, [
-                        games[viewed].get_stats_value("goals", id) + Math.floor(Math.random() * 21),
-                        games[viewed].get_stats_value("assists", id) + Math.floor(Math.random() * 21),
-                        games[viewed].get_stats_value("saves", id) + Math.floor(Math.random() * 21),
-                        games[viewed].get_stats_value("mvps", id) + Math.floor(Math.random() * 2.1),
-                        games[viewed].get_stats_value("wins", id) + Math.floor(Math.random() * 2),
-                        games[viewed].get_stats_value("matches", id) + 1,
-        ])
-        }
-
-        console.log(games[viewed].get_stats_value("kills", id) + Math.floor(Math.random() * 31))
+        sim_modal.hide()
+        write()
     }
-    write()
+    else{
+        for(let i = 1; i <= input_len - games[viewed].get_max_players_in_round(); i++){
+            inputs[inputs.length - i].classList.add("is-invalid")
+        }
+    }
 
 })
