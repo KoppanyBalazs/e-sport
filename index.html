@@ -63,6 +63,8 @@
                     <div class="border rounded-sm shadow p-3">
                         <div class="accordion output">
                         </div>
+                        <p class="my-3 fs-4 text-center text-secondary d-none empty_list">Jelenleg nincsen játékos
+                            leszerződve a csapatba!</p>
                     </div>
                 </div>
             </div>
@@ -113,7 +115,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
                     <button type="button" class="btn btn-success add-btn" data-bs-dismiss="modal">Játékos
-                        mentése</button>
+                        felvétele</button>
                 </div>
             </div>
         </div>
@@ -136,7 +138,23 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
                     <button type="button" class="btn btn-primary sim-btn" data-bs-dismiss="modal">Szimuláció indítása</button>
+    <div class="modal fade delete-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <h5 class="modal-title text-white">Törlés</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <div class="modal-body delete-modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger delete-btn" data-bs-dismiss="modal">Törlés</button>
+                </div>
+            </div>
+        </div>
+    </div>
             </div>
         </div>
     </div>

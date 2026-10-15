@@ -10,3 +10,8 @@ body {
 .nav-item {
     cursor: pointer;
 }
+
+.chart {
+    max-width: 300px;
+}
+}

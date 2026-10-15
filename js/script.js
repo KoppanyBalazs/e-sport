@@ -6,28 +6,30 @@ const games = [
 
 const valorant_players = [new Player("Béla a tesztből", "test_bela1", 0, 150_000, games[0])]
 const rocket_league_players = [new Player("Nagy Feró", "nyolc_ora_munka", 0, 100_000, games[1])]
-var players_used = valorant_players
+var players_used = valorant_players.slice();
 
 var chart = NaN
+var deleteID = -1;
 
 const add_modal = new bootstrap.Modal(".add-modal")
 const sim_modal = new bootstrap.Modal(".sim-modal")
+const delete_modal = new bootstrap.Modal(".delete-modal")
 
 viewed = 0//0 = valorant 1 = rocket_league
 
 //Teszt adat feltöltés
-function add_in_bulk(game_index, id, values){
+function add_in_bulk(game_index, id, values) {
     var keys = Object.keys(games[game_index].get_stats())
-    for(let i = 0; i < keys.length; i++){
+    for (let i = 0; i < keys.length; i++) {
         games[game_index].add_stat_value(keys[i], id, values[i])
     }
 }
 
 //Nem használt de ha akarjuk feltudjuk használni egy keresőhöz pl
-function search_player(players,id){
+function search_player(players, id) {
     var index = -1
-    for(let i = 0; i < players.length; i++){
-        if(players[i].get_id() == id){
+    for (let i = 0; i < players.length; i++) {
+        if (players[i].get_id() == id) {
             index = i
         }
     }
@@ -35,8 +37,8 @@ function search_player(players,id){
 }
 
 //chart létrehozása, ha a felhasználó megnyitja az accordiont
-function new_chart(id){
-    if(chart){
+function new_chart(id) {
+    if (chart) {
         chart.destroy()
     }
 
@@ -63,21 +65,26 @@ function new_chart(id){
     )
     chart.resize()
     chart.update()
-    
+
 }
 
-function write(){
+function write() {
     var output_accordion = document.querySelector(".output")
+    var empty_list_text = document.querySelector(".empty_list")
     output_accordion.innerHTML = ""
     var id = -1
 
-    //Játéktól függően, accordion-item-ek hozzáadása
-    if(! viewed){
-        for(let i = 0; i < players_used.length; i++){
-            id = players_used[i].get_id()
+    if (players_used.length == 0) {
+        empty_list_text.classList.remove('d-none');
+    } else {
+        empty_list_text.classList.add('d-none')
+        //Játéktól függően, accordion-item-ek hozzáadása
+        if (!viewed) {
+            for (let i = 0; i < players_used.length; i++) {
+                id = players_used[i].get_id()
 
-            output_accordion.innerHTML += 
-            `
+                output_accordion.innerHTML +=
+                    `
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" onclick = "new_chart(${id})" data-bs-toggle="collapse"
@@ -95,21 +102,24 @@ function write(){
                                 <p class = "p-2 fw-bold">K/D: ${games[viewed].get_stats_value("kills", id) / games[viewed].get_stats_value("deaths", id)}</p>
                                 <p class = "p-2">Assists: ${games[viewed].get_stats_value("assists", id)}</p>
                                 </div>
-                                <div class = "p-2 flex-grow-1"><canvas class = "chart-${id}"><canvas></div>
+                                <div class = "p-2 flex-grow-1 chart"><canvas class = "chart-${id}"><canvas></div>
                             </div>
+                        </div>
+                        <div class="text-end mt-2">
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="delete_ID(${i})">Játékos törlése</button>
                         </div>
                     </div>
                 </div>
             </div>
             `
+            }
         }
-    }
-    else{
-        for(let i = 0; i < players_used.length; i++){
-            id = rocket_league_players[i].get_id()
+        else {
+            for (let i = 0; i < players_used.length; i++) {
+                id = players_used[i].get_id()
 
-            output_accordion.innerHTML += 
-            `
+                output_accordion.innerHTML +=
+                    `
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" onclick = "new_chart(${id})" data-bs-toggle="collapse"
@@ -123,20 +133,44 @@ function write(){
                             <div class = "d-flex flex-row">
                                 <div class = "p-2 flex-grow-1">
                                 <p class = "p-2 fw-bold">Goals: ${games[viewed].get_stats_value("goals", id)}</p>
-                                <p class = "p-2 fw-bold">Saves: ${games[viewed].get_stats_value("saves",id)}</p>
+                                <p class = "p-2 fw-bold">Saves: ${games[viewed].get_stats_value("saves", id)}</p>
                                 <p class = "p-2 fw-bold">MVPs: ${games[viewed].get_stats_value("mvps", id)}</p>
                                 <p class = "p-2">Assists: ${games[viewed].get_stats_value("assists", id)}</p>
                                 </div>
-                                <div class = "p-2 flex-grow-1"><canvas class = "chart-${id}"><canvas></div>
+                                <div class = "p-2 flex-grow-1 chart"><canvas class = "chart-${id}"><canvas></div>
                             </div>
+                        </div>
+                        <div class="text-end mt-2">
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="delete_ID(${i})">Játékos törlése</button>
                         </div>
                     </div>
                 </div>
             </div>
             `
+            }
         }
     }
 }
+function delete_ID(index) {
+    deleteID = index;
+
+    document.querySelector(".delete-modal-body").innerHTML = `<p>Biztosan törölni szeretnéd ezt a játékost a ${(viewed) ? "Rocket League" : "Valorant"} csapatból?</p>
+                                                        <p class="m-0">${(viewed) ? `${rocket_league_players[index].get_name()} (${rocket_league_players[index].get_nick()})` : `${valorant_players[index].get_name()} (${valorant_players[index].get_nick()})`}</p>`
+
+    delete_modal.show();
+}
+
+document.querySelector(".delete-btn").addEventListener('click', () => {
+    if (viewed) {
+        rocket_league_players.splice(deleteID, 1)
+        players_used = rocket_league_players.slice();
+    } else {
+        valorant_players.splice(deleteID, 1)
+        players_used = valorant_players.slice();
+    }
+    write(viewed);
+    
+})
 
 add_in_bulk(0, 0, [15, 10, 4, 4, 3, 1, 2])
 add_in_bulk(1, 0, [10, 12, 4, 1, 3, 3])
@@ -207,6 +241,13 @@ function is_valid_input() {
     return name_valid && nick_valid && date_valid
 }
 
+function next_id(players) {
+    if (players.length == 0) {
+        return 0;
+    }
+    return players[players.length - 1].get_id() + 1;
+}
+
 document.querySelector(".add-btn").addEventListener('click', () => {
     if (!is_valid_input()) {
         return;
@@ -220,14 +261,14 @@ document.querySelector(".add-btn").addEventListener('click', () => {
             parseInt(time_parts[0]),
             parseInt(time_parts[1])
         );
-
-        var p = new Player(new_name.value, new_nick.value, players_used.length, new_pay.value, games[viewed], date_time);
-        if (! viewed) {
-            add_in_bulk(viewed, players_used.length, [0,0,0,0,0,0,0])
+        if (!viewed) {
+            var p = new Player(new_name.value, new_nick.value, next_id(valorant_players), new_pay.value, games[viewed], date_time);
+            add_in_bulk(viewed, next_id(valorant_players), [0, 0, 0, 0, 0, 0, 0])
             valorant_players.push(p);
             players_used = valorant_players.slice()
-        } else{
-            add_in_bulk(viewed, players_used.length, [0,0,0,0,0,0])
+        } else {
+            var p = new Player(new_name.value, new_nick.value, next_id(rocket_league_players), new_pay.value, games[viewed], date_time);
+            add_in_bulk(viewed, next_id(rocket_league_players), [0, 0, 0, 0, 0, 0])
             rocket_league_players.push(p);
             players_used = rocket_league_players.slice()
         }
@@ -247,14 +288,14 @@ document.querySelector(".sim-modalbtn").addEventListener("click", () => {
     var inputs = document.querySelector(".sim-inputs")
     inputs.innerHTML = ""
 
-    for(let i = 0; i < players_used.length; i++){
-        inputs.innerHTML += 
-        `
+    for (let i = 0; i < players_used.length; i++) {
+        inputs.innerHTML +=
+            `
         <div class = "p-2 d-flex flex-row justify-content-center form-check">
             <p class = "p-1 flex-grow-1">${i + 1}. Játékos:<p>
             <p class = "p-1 flex-grow-1">${players_used[i].get_nick()}</p>
             <p class = "p-1 flex-grow-1">Játszott:</p>
-            <input type = "checkbox" value = "${i}" class = "form-control index-${i} form-check-input">
+            <input type = "checkbox" value = "${players_used[i].get_id()}" class = "form-control index-${i} form-check-input">
         </div>
         `
     }
@@ -267,36 +308,36 @@ document.querySelector(".sim-btn").addEventListener("click", () => {
 
     var inputs = []
     var checkbox = ""
-    for(let i = 0; i < players_used.length; i++){
+    for (let i = 0; i < players_used.length; i++) {
         checkbox = document.querySelector(`.index-${i}`)
-        if(checkbox.checked){
+        if (checkbox.checked) {
             inputs.push(Number.parseInt(checkbox.value))
         }
     }
 
     var id = -1
-    for(let i = 0; i < inputs.length; i++){
+    for (let i = 0; i < inputs.length; i++) {
         id = inputs[i]
-        if(! viewed){
+        if (!viewed) {
             add_in_bulk(viewed, id, [
-                        games[viewed].get_stats_value("kills", id) + Math.floor(Math.random() * 31),
-                        games[viewed].get_stats_value("assists", id) + Math.floor(Math.random() * 31),
-                        games[viewed].get_stats_value("deaths", id) + Math.floor(Math.random() * 31),
-                        games[viewed].get_stats_value("spikes", id) + Math.floor(Math.random() * 9),
-                        games[viewed].get_stats_value("defuses", id) + Math.floor(Math.random() * 9),
-                        games[viewed].get_stats_value("wins", id) + Math.floor(Math.random() * 2),
-                        games[viewed].get_stats_value("matches", id) + 1,
-        ])
+                games[viewed].get_stats_value("kills", id) + Math.floor(Math.random() * 31),
+                games[viewed].get_stats_value("assists", id) + Math.floor(Math.random() * 31),
+                games[viewed].get_stats_value("deaths", id) + Math.floor(Math.random() * 31),
+                games[viewed].get_stats_value("spikes", id) + Math.floor(Math.random() * 9),
+                games[viewed].get_stats_value("defuses", id) + Math.floor(Math.random() * 9),
+                games[viewed].get_stats_value("wins", id) + Math.floor(Math.random() * 2),
+                games[viewed].get_stats_value("matches", id) + 1,
+            ])
         }
-        else{
+        else {
             add_in_bulk(viewed, id, [
-                        games[viewed].get_stats_value("goals", id) + Math.floor(Math.random() * 21),
-                        games[viewed].get_stats_value("assists", id) + Math.floor(Math.random() * 21),
-                        games[viewed].get_stats_value("saves", id) + Math.floor(Math.random() * 21),
-                        games[viewed].get_stats_value("mvps", id) + Math.floor(Math.random() * 2.1),
-                        games[viewed].get_stats_value("wins", id) + Math.floor(Math.random() * 2),
-                        games[viewed].get_stats_value("matches", id) + 1,
-        ])
+                games[viewed].get_stats_value("goals", id) + Math.floor(Math.random() * 21),
+                games[viewed].get_stats_value("assists", id) + Math.floor(Math.random() * 21),
+                games[viewed].get_stats_value("saves", id) + Math.floor(Math.random() * 21),
+                games[viewed].get_stats_value("mvps", id) + Math.floor(Math.random() * 2.1),
+                games[viewed].get_stats_value("wins", id) + Math.floor(Math.random() * 2),
+                games[viewed].get_stats_value("matches", id) + 1,
+            ])
         }
 
         console.log(games[viewed].get_stats_value("kills", id) + Math.floor(Math.random() * 31))
