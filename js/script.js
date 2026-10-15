@@ -14,6 +14,7 @@ var deleteID = -1;
 const add_modal = new bootstrap.Modal(".add-modal")
 const sim_modal = new bootstrap.Modal(".sim-modal")
 const delete_modal = new bootstrap.Modal(".delete-modal")
+const success_toast = new bootstrap.Toast(".toast")
 
 viewed = 0//0 = valorant 1 = rocket_league
 
@@ -151,6 +152,24 @@ function write() {
         }
     }
 }
+// success toast helper (ai)
+
+const toast_element = document.querySelector(".toast")
+const toast_title = document.querySelector(".toast-header strong")
+const toast_body = document.querySelector(".toast-body")
+const toast_square = document.querySelector(".toast-square")
+const toast = new bootstrap.Toast(toast_element, { delay: 3000 })
+
+function show_toast(title, message, color) {
+    toast_title.textContent = title
+    toast_body.textContent = message
+    toast_square.classList.remove("bg-success", "bg-danger")
+    toast_square.classList.add("bg-" + color)
+    toast.show()
+}
+
+//
+
 function delete_ID(index) {
     deleteID = index;
 
@@ -161,6 +180,7 @@ function delete_ID(index) {
 }
 
 document.querySelector(".delete-btn").addEventListener('click', () => {
+    show_toast("Játékos törölve!", `${players_used[deleteID].get_name()} szerződése törlődött.`, "danger");
     if (viewed) {
         rocket_league_players.splice(deleteID, 1)
         players_used = rocket_league_players.slice();
@@ -279,6 +299,9 @@ document.querySelector(".add-btn").addEventListener('click', () => {
         new_name.value = new_nick.value = new_date.value = "";
         new_pay.value = 20000;
         rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
+
+
+        show_toast("Játékos hozzáadva!", `${p.get_name()} szerződése felvételre került.`, "success");
     }
 })
 
