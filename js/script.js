@@ -13,7 +13,22 @@ var chart = NaN
 const add_modal = new bootstrap.Modal(".add-modal")
 const sim_modal = new bootstrap.Modal(".sim-modal")
 
-viewed = 0//0 = valorant 1 = rocket_league
+var toast = NaN
+var toast_values = []
+const toast_live = document.getElementById('live-toast')
+
+var new_name = document.querySelector(".add-name");
+var new_nick = document.querySelector(".add-nick");
+var new_pay = document.querySelector(".add-pay");
+var new_date = document.querySelector(".add-date");
+var new_time = document.querySelector(".add-time");
+var date_error = document.querySelector(".date-error")
+
+var edit_index = -1
+var edit_stat_index = -1
+var edit_stat_name = ""
+
+var viewed = 0//0 = valorant 1 = rocket_league
 
 //Teszt adat feltöltés
 function add_in_bulk(game_index, id, values){
@@ -87,15 +102,16 @@ function write(){
                 </h2>
                 <div id="p-${id}" class="accordion-collapse collapse">
                     <div class="accordion-body p-3">
+                        <button type="button" class="btn btn-warning edit-player" onclick = "start_edit(${i})">Szerződés szerkesztése</button>
                         <div class="row g-2">
                             <div class = "d-flex flex-row">
-                                <div class = "p-2 flex-grow-1">
-                                <p class = "p-2 fw-bold">Spikes: ${games[viewed].get_stats_value("spikes", id)}</p>
-                                <p class = "p-2 fw-bold">Defuses: ${games[viewed].get_stats_value("defuses", id)}</p>
-                                <p class = "p-2 fw-bold">K/D: ${games[viewed].get_stats_value("kills", id) / games[viewed].get_stats_value("deaths", id)}</p>
-                                <p class = "p-2">Assists: ${games[viewed].get_stats_value("assists", id)}</p>
+                                    <div class = "p-2 flex-grow-1">
+                                    <p class = "p-2 fw-bold">Spikes: ${games[viewed].get_stats_value("spikes", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['spikes'], ${id})"> </i></p>
+                                    <p class = "p-2 fw-bold">Defuses: ${games[viewed].get_stats_value("defuses", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['defuses'], ${id})"> </i></p>
+                                    <p class = "p-2 fw-bold">K/D: ${games[viewed].get_stats_value("kills", id) / games[viewed].get_stats_value("deaths", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['kills', 'deaths'], ${id})"> </i></p>
+                                    <p class = "p-2">Assists: ${games[viewed].get_stats_value("assists", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['assists'], ${id})"> </i></p>
                                 </div>
-                                <div class = "p-2 flex-grow-1"><canvas class = "chart-${id}"><canvas></div>
+                                <div class = "p-2 flex-grow-1"><canvas class = "chart-${id}"><canvas></div><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['wins', 'matches'], ${id})"></i>
                             </div>
                         </div>
                     </div>
@@ -119,15 +135,16 @@ function write(){
                 </h2>
                 <div id="p-${id}" class="accordion-collapse collapse">
                     <div class="accordion-body p-3">
+                        <button type="button" class="btn btn-warning edit-player" onclick = "start_edit(${i})">Szerződés szerkesztése</button>
                         <div class="row g-2">
                             <div class = "d-flex flex-row">
                                 <div class = "p-2 flex-grow-1">
-                                <p class = "p-2 fw-bold">Goals: ${games[viewed].get_stats_value("goals", id)}</p>
-                                <p class = "p-2 fw-bold">Saves: ${games[viewed].get_stats_value("saves",id)}</p>
-                                <p class = "p-2 fw-bold">MVPs: ${games[viewed].get_stats_value("mvps", id)}</p>
-                                <p class = "p-2">Assists: ${games[viewed].get_stats_value("assists", id)}</p>
+                                    <p class = "p-2 fw-bold">Goals: ${games[viewed].get_stats_value("goals", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['goals'], ${id})"> </i></p>
+                                    <p class = "p-2 fw-bold">Saves: ${games[viewed].get_stats_value("saves",id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['saves'], ${id})"> </i></p>
+                                    <p class = "p-2 fw-bold">MVPs: ${games[viewed].get_stats_value("mvps", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['mvps'], ${id})"> </i></p>
+                                    <p class = "p-2">Assists: ${games[viewed].get_stats_value("assists", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['assists'], ${id})"> </i></p>
                                 </div>
-                                <div class = "p-2 flex-grow-1"><canvas class = "chart-${id}"><canvas></div>
+                                <div class = "p-2 flex-grow-1"><canvas class = "chart-${id}"><canvas></div><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['wins', 'matches'], ${id})"></i>
                             </div>
                         </div>
                     </div>
@@ -169,14 +186,6 @@ rangeInput.addEventListener('input', function () {
     rangeOutput.textContent = Intl.NumberFormat().format(this.value) + " Ft";
 });
 
-
-var new_name = document.querySelector(".add-name");
-var new_nick = document.querySelector(".add-nick");
-var new_pay = document.querySelector(".add-pay");
-var new_date = document.querySelector(".add-date");
-var new_time = document.querySelector(".add-time");
-var date_error = document.querySelector(".date-error")
-
 document.querySelector(".add-modalbtn").addEventListener('click', () => {
     add_modal.show();
     new_name.classList.remove("is-invalid")
@@ -184,6 +193,14 @@ document.querySelector(".add-modalbtn").addEventListener('click', () => {
     new_date.classList.remove("is-invalid")
     new_time.classList.remove("is-invalid")
     date_error.classList.remove("d-block")
+
+    document.querySelector(".add-header").classList.remove("bg-warning")
+    document.querySelector(".add-header").classList.add("bg-success")
+    document.querySelector(".add-header h5").innerHTML = "Új játékos felvétele"
+
+    document.querySelector(".add-btn").classList.remove("btn-warning")
+    document.querySelector(".add-btn").classList.add("btn-success")
+    document.querySelector(".add-btn").setAttribute("onclick", "add_player()")
 })
 
 function is_valid_input() {
@@ -207,12 +224,12 @@ function is_valid_input() {
     return name_valid && nick_valid && date_valid
 }
 
-document.querySelector(".add-btn").addEventListener('click', () => {
+function add_player(){
     if (!is_valid_input()) {
         return;
     } else {
         var date_parts = new_date.value.split("-");
-        var time_parts = new_time.value.split(":");
+        var time_parts = new_time.value.split(":");  
         var date_time = new Date(
             parseInt(date_parts[0]),
             parseInt(date_parts[1]) - 1,
@@ -239,7 +256,118 @@ document.querySelector(".add-btn").addEventListener('click', () => {
         new_pay.value = 20000;
         rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
     }
-})
+}
+
+//Szerződés szerkesztése
+function start_edit(index){
+    edit_index = index
+
+    add_modal.show()
+    document.querySelector(".add-header").classList.remove("bg-success")
+    document.querySelector(".add-header").classList.add("bg-warning")
+    document.querySelector(".add-header h5").innerHTML = "Szerződés módosítása"
+
+    document.querySelector(".add-btn").classList.remove("btn-success")
+    document.querySelector(".add-btn").classList.add("btn-warning")
+    document.querySelector(".add-btn").setAttribute("onclick", "edit_player()")
+
+
+    new_name.classList.remove("is-invalid")
+    new_name.value = players_used[edit_index].get_name()
+    new_nick.classList.remove("is-invalid")
+    new_nick.value = players_used[edit_index].get_nick()
+
+    new_pay.value = players_used[edit_index].get_pay()
+    rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
+
+    new_date.classList.remove("is-invalid")
+    new_time.classList.remove("is-invalid")
+
+    date_error.classList.remove("d-block")
+
+}
+
+function edit_player(){
+    console.log("fut")
+    if (!is_valid_input()) {
+        return;
+    }
+    else{
+        var date_parts = new_date.value.split("-");
+        var time_parts = new_time.value.split(":");
+        var date_time = new Date(
+            parseInt(date_parts[0]),
+            parseInt(date_parts[1]) - 1,
+            parseInt(date_parts[2]),
+            parseInt(time_parts[0]),
+            parseInt(time_parts[1])
+        );
+
+        players_used[edit_index].set_name(new_name.value)
+        players_used[edit_index].set_nick(new_nick.value)
+        players_used[edit_index].set_pay(new_pay.value)
+        players_used[edit_index].set_game(games[viewed])
+        players_used[edit_index].set_contracttime(date_time)
+
+        add_modal.hide();
+        write();
+
+        new_name.value = new_nick.value = new_date.value = "";
+        new_pay.value = 20000;
+        rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
+    }
+}
+
+function start_edit_stat(values, index){
+    toast_values = values
+    edit_stat_index = index
+    toast = bootstrap.Toast.getOrCreateInstance(toast_live)
+    toast.show()
+    toast_form = document.querySelector(".toast-form")
+    toast_form.innerHTML = ""
+
+    for(let i = 0; i < values.length; i++){
+        toast_form.innerHTML += 
+        `
+        <div class="p-2">
+            <label>${toast_values[i]}</label>
+            <input type = "number" class = "form-control edit-${toast_values[i]}"></input>
+            <div class="invalid-feedback"></div>
+        </div>
+        `
+    }
+
+}
+
+function edit_stat(){
+    var toast_input = NaN
+    var valid = true
+    for(let i = 0; i < toast_values.length; i++){
+        toast_input = document.querySelector(`.edit-${toast_values[i]}`)
+        toast_input.classList.remove("is-invalid")
+
+        if(Number.parseInt(toast_input.value) < 0 || Number.parseInt(toast_input.value) > 1000){
+            valid = false
+            toast_input.classList.add("is-invalid")
+            document.querySelector(".invalid-feedback").innerHTML = "Nem adhatsz meg 0-nál kisebb vagy 1000-nél nagyobb értéket!"
+        }
+        else if(toast_values.length == 2 && toast_values[0] == "wins" && 
+            Number.parseInt(document.querySelector(`.edit-${toast_values[0]}`).value) > Number.parseInt(toast_input.value)){
+            valid = false
+            document.querySelector(`.edit-${toast_values[0]}`).classList.add("is-invalid")
+            document.querySelector(".invalid-feedback").innerHTML = "Nem lehet a győzelmek száma nagyobb mint a meccseké!"
+            }
+        else if(valid){
+            games[viewed].add_stat_value(toast_values[i], edit_stat_index, Number.parseInt(toast_input.value))
+        }
+    }
+
+    if(valid){
+        toast.hide()
+        write()
+    }
+
+}
 
 document.querySelector(".sim-modalbtn").addEventListener("click", () => {
     sim_modal.show()
@@ -255,7 +383,7 @@ document.querySelector(".sim-modalbtn").addEventListener("click", () => {
             <p class = "p-1 flex-grow-1">${players_used[i].get_nick()}</p>
             <p class = "p-1 flex-grow-1">Játszott:</p>
             <input type = "checkbox" value = "${i}" class = "index-${i} form-check-input">
-            <div class="invalid-feedback w-100 p-1">Több játékost mint ${games[viewed].get_max_players_in_round()} játékos!</div>
+            <div class="invalid-feedback w-100 p-1">Több játékos mint ${games[viewed].get_max_players_in_round()}!</div>
         </div>
         `
     }

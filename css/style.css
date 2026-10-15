@@ -10,3 +10,7 @@ body {
 .nav-item {
     cursor: pointer;
 }
+
+.bi-pencil-fill:hover{
+    color: #888;
+}
