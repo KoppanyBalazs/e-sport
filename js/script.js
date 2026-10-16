@@ -16,9 +16,9 @@ const sim_modal = new bootstrap.Modal(".sim-modal")
 const delete_modal = new bootstrap.Modal(".delete-modal")
 const success_toast = new bootstrap.Toast(".toast")
 
-var toast = NaN
-var toast_values = []
-const toast_live = document.getElementById('live-toast')
+var toast_input = NaN
+var toast_input_values = []
+const toast_input_live = document.querySelector('#live-toast')
 
 var new_name = document.querySelector(".add-name");
 var new_nick = document.querySelector(".add-nick");
@@ -171,9 +171,9 @@ function write() {
 }
 // success toast helper (ai)
 
-const toast_element = document.querySelector(".toast")
-const toast_title = document.querySelector(".toast-header strong")
-const toast_body = document.querySelector(".toast-body")
+const toast_element = document.querySelector(".toast-success")
+const toast_title = document.querySelector(".toast-success-header strong")
+const toast_body = document.querySelector(".toast-success-body")
 const toast_square = document.querySelector(".toast-square")
 const toast = new bootstrap.Toast(toast_element, { delay: 3000 })
 
@@ -383,19 +383,19 @@ function edit_player(){
 }
 
 function start_edit_stat(values, index){
-    toast_values = values
+    toast_input_values = values
     edit_stat_index = index
-    toast = bootstrap.Toast.getOrCreateInstance(toast_live)
-    toast.show()
+    toast_input = bootstrap.Toast.getOrCreateInstance(toast_input_live, {delay: 15000})
+    toast_input.show()
     toast_form = document.querySelector(".toast-form")
     toast_form.innerHTML = ""
 
-    for(let i = 0; i < values.length; i++){
+    for(let i = 0; i < toast_input_values.length; i++){
         toast_form.innerHTML += 
         `
         <div class="p-2">
-            <label>${toast_values[i]}</label>
-            <input type = "number" class = "form-control edit-${toast_values[i]}"></input>
+            <label>${toast_input_values[i]}</label>
+            <input type = "number" class = "form-control edit-${toast_input_values[i]}"></input>
             <div class="invalid-feedback"></div>
         </div>
         `
@@ -404,30 +404,30 @@ function start_edit_stat(values, index){
 }
 
 function edit_stat(){
-    var toast_input = NaN
+    var toast_inputfield = NaN
     var valid = true
-    for(let i = 0; i < toast_values.length; i++){
-        toast_input = document.querySelector(`.edit-${toast_values[i]}`)
-        toast_input.classList.remove("is-invalid")
+    for(let i = 0; i < toast_input_values.length; i++){
+        toast_inputfield = document.querySelector(`.edit-${toast_input_values[i]}`)
+        toast_inputfield.classList.remove("is-invalid")
 
-        if(Number.parseInt(toast_input.value) < 0 || Number.parseInt(toast_input.value) > 1000){
+        if(Number.parseInt(toast_inputfield.value) < 0 || Number.parseInt(toast_inputfield.value) > 1000){
             valid = false
-            toast_input.classList.add("is-invalid")
+            toast_inputfield.classList.add("is-invalid")
             document.querySelector(".invalid-feedback").innerHTML = "Nem adhatsz meg 0-nál kisebb vagy 1000-nél nagyobb értéket!"
         }
-        else if(toast_values.length == 2 && toast_values[0] == "wins" && 
-            Number.parseInt(document.querySelector(`.edit-${toast_values[0]}`).value) > Number.parseInt(toast_input.value)){
+        else if(toast_input_values.length == 2 && toast_input_values[0] == "wins" && 
+            Number.parseInt(document.querySelector(`.edit-${toast_input_values[0]}`).value) > Number.parseInt(toast_inputfield.value)){
             valid = false
-            document.querySelector(`.edit-${toast_values[0]}`).classList.add("is-invalid")
+            document.querySelector(`.edit-${toast_input_values[0]}`).classList.add("is-invalid")
             document.querySelector(".invalid-feedback").innerHTML = "Nem lehet a győzelmek száma nagyobb mint a meccseké!"
             }
         else if(valid){
-            games[viewed].add_stat_value(toast_values[i], edit_stat_index, Number.parseInt(toast_input.value))
+            games[viewed].add_stat_value(toast_input_values[i], edit_stat_index, Number.parseInt(toast_inputfield.value))
         }
     }
 
     if(valid){
-        toast.hide()
+        toast_input.hide()
         write()
     }
 
