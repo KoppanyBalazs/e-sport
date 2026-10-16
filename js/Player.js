@@ -81,7 +81,12 @@ class Player {
     get_nick() {
         return this.#nick;
     }
+
     get_contracttime() {
+        return this.#contracttime;
+    }
+
+    get_contractleft() {
         var now = new Date();
 
         var from = Math.floor((this.#contracttime.getTime() - now.getTime()) / 1000);
