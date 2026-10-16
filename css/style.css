@@ -11,6 +11,8 @@ body {
     cursor: pointer;
 }
 
+.bi-pencil-fill:hover{
+    color: #888;
 .chart {
     max-width: 300px;
 }
