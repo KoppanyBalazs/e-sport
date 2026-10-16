@@ -2,5 +2,11 @@
     - to_string hiba: game class nevét (get_name()) lenne legoptimálisabb kiírni
 
 10.13
-#2 - Game class:
+#1 - Game class:
   - add_stat hiba: ha először nagyobb indexhez akarunk statot adni, mint ami már meg van adva, akkor automatikusan a legközelebbi indexre tárolja el az adatot.
+
+Második egységteszt
+10.15
+#2 - Game class:
+    - nincs lekezelve a Game.js-ben az, ha nem létező statnak akarunk értéket adni (add_stat_value()), vagy törölni (remove_stat_value()), ilyenkor undefined statmező lengthjét próbálja elérni, mely typeerrort dob a konzolra.
+    - ennek nincs jelentősége frontenden ugyanis hard codeolva van minden statfelvétel, de tisztának kell lennie a kódnak
