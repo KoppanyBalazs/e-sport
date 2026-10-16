@@ -13,4 +13,11 @@ body {
 
 .bi-pencil-fill:hover{
     color: #888;
+.chart {
+    max-width: 300px;
+}
+
+.toast-square {
+    width: 20px;
+    height: 20px;
 }

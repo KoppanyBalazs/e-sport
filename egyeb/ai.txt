@@ -1,3 +1,4 @@
 Claude Sonnet 5.5 - chart debugging
 
-Claude Sonnet 5.5 - AI sorok száma: ebben a commitben változtatott sorok (script.js). Emellett megoldás keresésre használtam (.is-invalid osztályra felhívta a figyelmem, a kód saját!)
+Claude Sonnet 5.5 - AI sorok száma: ebben a commitben változtatott sorok (script.js). Emellett megoldás keresésre használtam (.is-invalid osztályra felhívta a figyelmem)
+
