@@ -56,7 +56,7 @@ class Game{
         }
     }
 
-    //Új érték adása egy meglévő stathoz, ha az index eggyel nagyobb a legnagyobbnál, új értékkánt pusholja, egyébként meg csak módosítja a meglévőt
+    //Új érték adása egy meglévő stathoz, ha az index eggyel nagyobb a legnagyobbnál, új értékként pusholja, egyébként meg csak módosítja a meglévőt
     add_stat_value(stat_name, index, value){
         if(Number.isInteger(value) && index < this.get_stats()[stat_name].length){
             this.get_stats()[stat_name][index] = value

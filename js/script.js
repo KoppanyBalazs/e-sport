@@ -16,6 +16,9 @@ const sim_modal = new bootstrap.Modal(".sim-modal")
 const delete_modal = new bootstrap.Modal(".delete-modal")
 const success_toast = new bootstrap.Toast(".toast")
 
+const accordions = []
+const accordions_collapse = []
+
 var toast_input = NaN
 var toast_input_values = []
 const toast_input_live = document.querySelector('#live-toast')
@@ -104,13 +107,13 @@ function write() {
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" onclick = "new_chart(${id})" data-bs-toggle="collapse"
-                        data-bs-target="#p-${id}" aria-expanded="false" aria-controls="p-${id}">
+                        data-bs-target="#acc-${i}" aria-expanded="false" aria-controls="acc-${i}">
                         ${players_used[i].get_name()}
                     </button>
                 </h2>
-                <div id="p-${id}" class="accordion-collapse collapse">
+                <div id="acc-${i}" class="accordion-collapse collapse">
                     <div class="accordion-body p-3">
-                        <button type="button" class="btn btn-warning edit-player" onclick = "start_edit(${i})">Szerződés szerkesztése</button>
+                        <button type="button" class="btn btn-warning accordion-btn" onclick = "start_edit(${i})">Szerződés szerkesztése</button>
                         <div class="row g-2">
                             <div class = "d-flex flex-row">
                                     <div class = "p-2 flex-grow-1">
@@ -129,6 +132,13 @@ function write() {
                 </div>
             </div>
             `
+            accordions.push(document.querySelector(`#acc-${i}`))
+            accordions_collapse.push(bootstrap.Collapse.getOrCreateInstance(accordions[i], { toggle: false }))
+            accordions[i].addEventListener("show.bs.collapse", () => {
+            for(let j = 0; j < accordions_collapse.length; j++){
+                accordions_collapse[j].toggle()
+            }
+            })
             }
         }
         else {
@@ -139,14 +149,14 @@ function write() {
                     `
             <div class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" onclick = "new_chart(${id})" data-bs-toggle="collapse"
-                        data-bs-target="#p-${id}" aria-expanded="false" aria-controls="p-${id}">
+                    <button class="accordion-button collapsed accordion-btn" type="button" onclick = "new_chart(${id})" data-bs-toggle="collapse"
+                        data-bs-target="#acc-${i}" aria-expanded="false" aria-controls="p-${i}">
                         ${players_used[i].get_name()}
                     </button>
                 </h2>
-                <div id="p-${id}" class="accordion-collapse collapse">
+                <div id="acc-${i}" class="accordion-collapse collapse">
                     <div class="accordion-body p-3">
-                        <button type="button" class="btn btn-warning edit-player" onclick = "start_edit(${i})">Szerződés szerkesztése</button>
+                        <button type="button" class="btn btn-warning" onclick = "start_edit(${i})">Szerződés szerkesztése</button>
                         <div class="row g-2">
                             <div class = "d-flex flex-row">
                                 <div class = "p-2 flex-grow-1">
@@ -165,8 +175,16 @@ function write() {
                 </div>
             </div>
             `
+            accordions.push(document.querySelector(`#acc-${id}`))
+            accordions_collapse.push(bootstrap.Collapse.getOrCreateInstance(accordions[i], { toggle: false }))
+            accordions[i].addEventListener("show.bs.collapse", () => {
+            for(let i = 0; i < accordions.length; i++){
+                accordions[i].hide()
+            }
+            })
             }
         }
+
     }
 }
 // success toast helper (ai)
@@ -437,6 +455,7 @@ function edit_stat() {
 }
 
 document.querySelector(".sim-modalbtn").addEventListener("click", () => {
+
     sim_modal.show()
 
     var inputs = document.querySelector(".sim-inputs")
