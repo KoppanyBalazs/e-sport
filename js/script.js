@@ -16,9 +16,6 @@ const sim_modal = new bootstrap.Modal(".sim-modal")
 const delete_modal = new bootstrap.Modal(".delete-modal")
 const success_toast = new bootstrap.Toast(".toast")
 
-const accordions = []
-const accordions_collapse = []
-
 var toast_input = NaN
 var toast_input_values = []
 const toast_input_live = document.querySelector('#live-toast')
@@ -111,7 +108,7 @@ function write() {
                         ${players_used[i].get_name()}
                     </button>
                 </h2>
-                <div id="acc-${i}" class="accordion-collapse collapse">
+                <div id="acc-${i}" class="accordion-collapse collapse" data-bs-parent = ".output">
                     <div class="accordion-body p-3">
                         <button type="button" class="btn btn-warning accordion-btn" onclick = "start_edit(${i})">Szerződés szerkesztése</button>
                         <div class="row g-2">
@@ -132,13 +129,6 @@ function write() {
                 </div>
             </div>
             `
-            accordions.push(document.querySelector(`#acc-${i}`))
-            accordions_collapse.push(bootstrap.Collapse.getOrCreateInstance(accordions[i], { toggle: false }))
-            accordions[i].addEventListener("show.bs.collapse", () => {
-            for(let j = 0; j < accordions_collapse.length; j++){
-                accordions_collapse[j].toggle()
-            }
-            })
             }
         }
         else {
@@ -154,7 +144,7 @@ function write() {
                         ${players_used[i].get_name()}
                     </button>
                 </h2>
-                <div id="acc-${i}" class="accordion-collapse collapse">
+                <div id="acc-${i}" class="accordion-collapse collapse" data-bs-parent = ".output">
                     <div class="accordion-body p-3">
                         <button type="button" class="btn btn-warning" onclick = "start_edit(${i})">Szerződés szerkesztése</button>
                         <div class="row g-2">
@@ -175,18 +165,11 @@ function write() {
                 </div>
             </div>
             `
-            accordions.push(document.querySelector(`#acc-${id}`))
-            accordions_collapse.push(bootstrap.Collapse.getOrCreateInstance(accordions[i], { toggle: false }))
-            accordions[i].addEventListener("show.bs.collapse", () => {
-            for(let i = 0; i < accordions.length; i++){
-                accordions[i].hide()
             }
-            })
             }
         }
 
     }
-}
 // success toast helper (ai)
 
 const toast_element = document.querySelector(".toast-success")
@@ -492,27 +475,30 @@ document.querySelector(".sim-btn").addEventListener("click", () => {
 
     var input_len = inputs.length
     var id = -1
+    var wins = 0
     if (input_len <= games[viewed].get_max_players_in_round()) {
+        wins = Math.floor(Math.random() * (0.53 * input_len))
         for (let i = 0; i < input_len; i++) {
             id = Number.parseInt(inputs[i].value)
             if (!viewed) {
+                
                 add_in_bulk(viewed, id, [
-                    games[viewed].get_stats_value("kills", id) + Math.floor(Math.random() * 31),
-                    games[viewed].get_stats_value("assists", id) + Math.floor(Math.random() * 31),
-                    games[viewed].get_stats_value("deaths", id) + Math.floor(Math.random() * 31),
-                    games[viewed].get_stats_value("spikes", id) + Math.floor(Math.random() * 9),
-                    games[viewed].get_stats_value("defuses", id) + Math.floor(Math.random() * 9),
-                    games[viewed].get_stats_value("wins", id) + Math.floor(Math.random() * 2),
+                    games[viewed].get_stats_value("kills", id) + Math.floor(Math.random() * (6.2 * input_len)),
+                    games[viewed].get_stats_value("assists", id) + Math.floor(Math.random() * (6.2 * input_len)),
+                    games[viewed].get_stats_value("deaths", id) + Math.floor(Math.random() * (125 / input_len)),
+                    games[viewed].get_stats_value("spikes", id) + Math.floor(Math.random() * (1.5 * input_len)),
+                    games[viewed].get_stats_value("defuses", id) + Math.floor(Math.random() * (1.5 * input_len)),
+                    games[viewed].get_stats_value("wins", id) + wins,
                     games[viewed].get_stats_value("matches", id) + 1,
                 ])
             }
             else {
                 add_in_bulk(viewed, id, [
-                    games[viewed].get_stats_value("goals", id) + Math.floor(Math.random() * 21),
-                    games[viewed].get_stats_value("assists", id) + Math.floor(Math.random() * 21),
-                    games[viewed].get_stats_value("saves", id) + Math.floor(Math.random() * 21),
-                    games[viewed].get_stats_value("mvps", id) + Math.floor(Math.random() * 2.1),
-                    games[viewed].get_stats_value("wins", id) + Math.floor(Math.random() * 2),
+                    games[viewed].get_stats_value("goals", id) + Math.floor(Math.random() * (5.2 * input_len)),
+                    games[viewed].get_stats_value("assists", id) + Math.floor(Math.random() * (5.2 * input_len)),
+                    games[viewed].get_stats_value("saves", id) + Math.floor(Math.random() * (5.2 * input_len)),
+                    games[viewed].get_stats_value("mvps", id) + Math.floor(Math.random() * 2),
+                    games[viewed].get_stats_value("wins", id) + wins,
                     games[viewed].get_stats_value("matches", id) + 1,
                 ])
             }
