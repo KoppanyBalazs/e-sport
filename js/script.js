@@ -51,6 +51,8 @@ var edit_stat_name = ""
 
 var timeouts = []
 
+var in_simulation = 0
+
 var viewed = 0//0 = valorant 1 = rocket_league
 
 //Teszt adat feltöltés
@@ -524,13 +526,14 @@ document.querySelector(".sim-modalbtn").addEventListener("click", () => {
 
     for (let i = 0; i < players_used.length; i++) {
         if (players_used[i].get_contractleft() != "Lejárt") {
+            in_simulation++
             inputs.innerHTML +=
                 `
             <div class = "p-2 d-flex flex-row flex-wrap justify-content-center form-check">
                 <p class = "p-2 flex-grow-1">${i + 1}. Játékos:</p>
                 <p class = "p-2 flex-grow-1">${players_used[i].get_nick()}</p>
                 <p class = "p-2 flex-grow-1">Játszott:</p>
-                <input type = "checkbox" value = "${i}" class = "index-${i} form-check-input mx-1 m-2">
+                <input type = "checkbox" value = "${i}" class = "index-${in_simulation - 1} form-check-input mx-1 m-2">
                 <div class="invalid-feedback w-100 p-1">Több játékos mint ${games[viewed].get_max_players_in_round()}!</div>
             </div>
             `
@@ -544,13 +547,15 @@ document.querySelector(".sim-btn").addEventListener("click", () => {
 
     var inputs = []
     var checkbox = ""
-    for (let i = 0; i < players_used.length; i++) {
+    for (let i = 0; i < in_simulation; i++) {
         checkbox = document.querySelector(`.index-${i}`)
         if (checkbox.checked) {
             inputs.push(checkbox)
             checkbox.classList.remove("is-invalid")
         }
     }
+
+    in_simulation = 0
 
     var input_len = inputs.length
     var id = -1
