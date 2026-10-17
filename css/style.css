@@ -5,7 +5,6 @@ body {
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
-    color: #222;
     font-size: 16px;
 }
 
@@ -24,11 +23,6 @@ body {
 
 .accordion{
     min-width: 250px !important;
-}
-
-a{
-    color: inherit;
-    max-height: 16px;
 }
 
 @media(max-width: 780px){
