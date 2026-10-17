@@ -23,7 +23,7 @@ class Player {
             }
         }
         if (name.length <= 5 || hibas) {
-            this.#name = "Ismeretlen játékos"
+            this.#name = "Ismeretlen Játékos"
         }
         else {
             var name_array = name.split(" ")
@@ -56,7 +56,8 @@ class Player {
     }
 
     set_pay(val) {
-        if (val < 0 || val > 1_000_000) {
+        val = Number.parseInt(val)
+        if (Number.isNaN(val) || val < 0 || val > 1_000_000) {
             this.#pay = 0;
         }
         else {
@@ -69,10 +70,12 @@ class Player {
     }
 
     set_game(game) {
-        if (typeof game != Game) {
-            this.#game = new Game("", [], 0);
+        if (!(game instanceof Game)) {
+            this.#game = "Nincs játék hozzárendelve"
+        } else {
+            this.#game = game;
         }
-        this.#game = game;
+       
     }
 
     get_name() {
@@ -104,6 +107,6 @@ class Player {
     }
 
     to_string() {
-        return `{${this.get_name()};${this.get_nick()};${this.get_id()};${this.get_game().get_name()};${this.get_pay()};${this.get_contracttime()}}`
+        return `{${this.get_name()};${this.get_nick()};${this.get_id()};${(((this.get_game() instanceof Game))) ? this.get_game().get_name() : this.get_game()};${this.get_pay()};${this.get_contracttime()}}`
     }
 }

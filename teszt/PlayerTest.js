@@ -5,7 +5,7 @@ var bela = new Player("Kovács béla", "belus123", 0, 120_000, cs2, new Date(202
 var hibas_andras = new Player("", "", -5, 5_000_000, bela, new Date(2025, 9, 19, 21, 30, 0, 0))
 
 console.assert(bela.to_string() === "{Kovács Béla;belus123;0;Counter Strike 2;120000;Mon Oct 19 2026 23:30:00 GMT+0200 (közép-európai nyári idő)}", `Hiba a setter-ekben : ${bela.to_string()}`)
-console.assert(hibas_andras.to_string() === "{Ismeretlen Játékos;Anonymus;0;Nincs játék hozzádrendelve;0;Sun Oct 19 2026 21:30:00 GMT+0200 (közép-európai nyári idő)}", `Hiba a setter-ekben (ha rossz input-ot ad meg a felhasználó) :  ${hibas_andras.to_string()}`)
+console.assert(hibas_andras.to_string() === "{Ismeretlen Játékos;Anonymus;undefined;Nincs játék hozzárendelve;0;Sun Oct 19 2025 21:30:00 GMT+0200 (közép-európai nyári idő)}", `Hiba a setter-ekben (ha rossz input-ot ad meg a felhasználó) :  ${hibas_andras.to_string()}`)
 //Nem ellenőrzi hogy biztosan game osztály van-e megadva
 
 hibas_andras.set_pay(-5)
