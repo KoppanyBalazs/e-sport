@@ -13,7 +13,7 @@ body {
     cursor: pointer;
 }
 
-.bi-pencil-fill:hover{
+.bi-pencil-fill:hover, a:hover{
     color: #888;
 }
 
