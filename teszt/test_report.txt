@@ -1,3 +1,5 @@
+Első egységteszt
+10.12
 #1 - Player class:
     - to_string hiba: game class nevét (get_name()) lenne legoptimálisabb kiírni
 
@@ -10,3 +12,9 @@ Második egységteszt
 #2 - Game class:
     - nincs lekezelve a Game.js-ben az, ha nem létező statnak akarunk értéket adni (add_stat_value()), vagy törölni (remove_stat_value()), ilyenkor undefined statmező lengthjét próbálja elérni, mely typeerrort dob a konzolra.
     - ennek nincs jelentősége frontenden ugyanis hard codeolva van minden statfelvétel, de tisztának kell lennie a kódnak
+
+10.17
+#2 - Player class:
+    - Nem ellenőrzi hogy biztosan Game osztály van-e megadva a game változónak
+    - Számokat is enged megadni a névbe
+    - Szintén ezeknek sincs hatalmas jelentőssége, mert a játékokhoz nem nyúlhat a felhasználó, a névhez pedig van input ellenőrzés a script.js-ben
