@@ -18,7 +18,7 @@ class Player {
     set_name(name) {
         var hibas = false;
         for (let i = 0; i < name.length; i++) {
-            if ("0123456789".contains(name[i])) {
+            if ("0123456789".includes(name[i])) {
                 hibas = true;
             }
         }
