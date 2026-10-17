@@ -8,10 +8,10 @@ var gergo = new Player("", "", 2, 50000, valo, new Date(2026, 9, 19, 21, 30, 0, 
 console.assert(cs2.to_string() === "{Counter Strike 2;Üres;5}", "Hiba a konstruktor adatbeállításaiban!")
 console.assert(cs2.add_stat_value("kills", 0, 5), "Hiba az add_stat_value metódusban! (nem enged beállítani helyes adatot)")
 console.assert(!cs2.add_stat_value("damage", 4, 8), "Hiba az add_stat_value() metódusban! (rossz indexű adatot is beállít)")
-// hibás működés console.assert(cs2.add_stat_value("goals", 0, 8), "Hiba az add_stat_value() metódusban! (nem létező nevű adatot is beállít)")
+console.assert(!cs2.add_stat_value("goals", 0, 8), "Hiba az add_stat_value() metódusban! (nem létező nevű adatot is beállít)")
 
 console.assert(cs2.remove_stat_value("kills", 0), "Hiba a remove_stat_value() metódusban! (nem töröl ki valid adatot)")
-// hibás működés console.assert(cs2.remove_stat_value("goals", 0), "Hiba a remove_stat_value() metódusban! (nem létező statmezőt is lenulláz!)"
+console.assert(!cs2.remove_stat_value("goals", 0), "Hiba a remove_stat_value() metódusban! (nem létező statmezőt is lenulláz!)")
 console.assert(!cs2.remove_stat_value("kills", 1), "Hiba a remove_stat_value() metódusban! (nem létező indexű adatot is kitöröl")
 
 cs2.add_stat_value("kills", 0, 3)

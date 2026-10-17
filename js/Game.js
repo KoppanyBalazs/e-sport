@@ -58,11 +58,11 @@ class Game{
 
     //Új érték adása egy meglévő stathoz, ha az index eggyel nagyobb a legnagyobbnál, új értékként pusholja, egyébként meg csak módosítja a meglévőt
     add_stat_value(stat_name, index, value){
-        if(Number.isInteger(value) && index < this.get_stats()[stat_name].length){
+        if(Number.isInteger(value) && Object.keys(this.get_stats()).includes(stat_name) && index < this.get_stats()[stat_name].length){
             this.get_stats()[stat_name][index] = value
             return true
         }
-        else if(Number.isInteger(value) && index == this.get_stats()[stat_name].length){
+        else if(Number.isInteger(value) && Object.keys(this.get_stats()).includes(stat_name) && index == this.get_stats()[stat_name].length){
             this.get_stats()[stat_name].push(value)
             return true
         }
@@ -71,7 +71,7 @@ class Game{
 
     //Meglévő stathoz tartozó érték kitörlése, ha létezik
     remove_stat_value(stat_name, index){
-        if(index < this.get_stats()[stat_name].length){
+        if(Object.keys(this.get_stats()).includes(stat_name) && index < this.get_stats()[stat_name].length){
             this.get_stats()[stat_name][index] = 0
             return true
         }
