@@ -5,6 +5,8 @@ body {
     font-optical-sizing: auto;
     font-weight: 400;
     font-style: normal;
+    color: #222;
+    font-size: 16px;
 }
 
 .nav-item {
@@ -22,4 +24,39 @@ body {
 
 .accordion{
     min-width: 250px !important;
+}
+
+a{
+    color: inherit;
+    max-height: 16px;
+}
+
+@media(max-width: 780px){
+    canvas{
+        max-width: 200px;
+        max-height: 200px;
+    }
+}
+
+@media(max-width: 500px){
+    canvas{
+        max-width: 100px;
+        max-height: 100px;
+    }
+}
+
+@media(min-width: 780px){
+    canvas{
+        min-width: 200px;
+        min-height: 200px;
+    }
+}
+
+@media(min-width: 991px){
+    canvas{
+        min-width: 280px;
+        min-height: 280px;
+        max-width: 350px;
+        max-height: 350px;
+    }
 }

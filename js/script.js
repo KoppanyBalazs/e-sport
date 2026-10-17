@@ -114,12 +114,13 @@ function write() {
                         <div class="row g-2">
                             <div class = "d-flex flex-row">
                                     <div class = "p-2 flex-grow-1">
-                                    <p class = "p-2 fw-bold">Spikes: ${games[viewed].get_stats_value("spikes", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['spikes'], ${id})"> </i></p>
-                                    <p class = "p-2 fw-bold">Defuses: ${games[viewed].get_stats_value("defuses", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['defuses'], ${id})"> </i></p>
-                                    <p class = "p-2 fw-bold">K/D: ${games[viewed].get_stats_value("kills", id) / games[viewed].get_stats_value("deaths", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['kills', 'deaths'], ${id})"> </i></p>
-                                    <p class = "p-2">Assists: ${games[viewed].get_stats_value("assists", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['assists'], ${id})"> </i></p>
+                                    <p class = "p-2 fw-bold">Spikes: ${games[viewed].get_stats_value("spikes", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['spikes'], ${id})"></i></a></p>
+                                    <p class = "p-2 fw-bold">Defuses: ${games[viewed].get_stats_value("defuses", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['defuses'], ${id})"></i></a></p>
+                                    <p class = "p-2 fw-bold">K/D: ${games[viewed].get_stats_value("kills", id) / games[viewed].get_stats_value("deaths", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['kills', 'deaths'], ${id})"></i></a></p>
+                                    <p class = "p-2">Assists: ${games[viewed].get_stats_value("assists", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['assists'], ${id})"></i></a></p>
                                 </div>
-                                <div class = "p-2 flex-grow-1"><canvas class = "chart-${id}"><canvas></div><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['wins', 'matches'], ${id})"></i>
+                                <a href= "#toast-header"><i class = "p-2 bi bi-pencil-fill" onclick = "start_edit_stat(['wins', 'matches'], ${id})"></i></a>
+                                <div class = "p-2 flex-grow-1"><canvas class = "chart-${id}"><canvas></div>
                             </div>
                         </div>
                         <div class="text-end mt-2">
@@ -149,13 +150,14 @@ function write() {
                         <button type="button" class="btn btn-warning" onclick = "start_edit(${i})">Szerződés szerkesztése</button>
                         <div class="row g-2">
                             <div class = "d-flex flex-row">
-                                <div class = "p-2 flex-grow-1">
-                                    <p class = "p-2 fw-bold">Goals: ${games[viewed].get_stats_value("goals", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['goals'], ${id})"> </i></p>
-                                    <p class = "p-2 fw-bold">Saves: ${games[viewed].get_stats_value("saves", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['saves'], ${id})"> </i></p>
-                                    <p class = "p-2 fw-bold">MVPs: ${games[viewed].get_stats_value("mvps", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['mvps'], ${id})"> </i></p>
-                                    <p class = "p-2">Assists: ${games[viewed].get_stats_value("assists", id)} <i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['assists'], ${id})"> </i></p>
+                                <div class = "p-1 flex-grow-2">
+                                    <p class = "p-2 fw-bold">Goals: ${games[viewed].get_stats_value("goals", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['goals'], ${id})"></i></a></p>
+                                    <p class = "p-2 fw-bold">Saves: ${games[viewed].get_stats_value("saves", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['saves'], ${id})"></i></a></p>
+                                    <p class = "p-2 fw-bold">MVPs: ${games[viewed].get_stats_value("mvps", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['mvps'], ${id})"></i></a></p>
+                                    <p class = "p-2">Assists: ${games[viewed].get_stats_value("assists", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['assists'], ${id})"></i></a></p>
                                 </div>
-                                <div class = "p-2 flex-grow-1"><canvas class = "chart-${id}"><canvas></div><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['wins', 'matches'], ${id})"></i>
+                                <a href= "#toast-header"><i class = "p-2 bi bi-pencil-fill" onclick = "start_edit_stat(['wins', 'matches'], ${id})"></a></i>
+                                <div class = "p-2 flex-grow-1"><canvas class = "chart-${id}"><canvas></div>
                             </div>
                         </div>
                         <div class="text-end mt-2">
@@ -389,7 +391,7 @@ function edit_player() {
 function start_edit_stat(values, index) {
     toast_input_values = values
     edit_stat_index = index
-    toast_input = bootstrap.Toast.getOrCreateInstance(toast_input_live, { delay: 15000 })
+    toast_input = bootstrap.Toast.getOrCreateInstance(toast_input_live, { delay: 25000 })
     toast_input.show()
     toast_form = document.querySelector(".toast-form")
     toast_form.innerHTML = ""
@@ -448,10 +450,10 @@ document.querySelector(".sim-modalbtn").addEventListener("click", () => {
         inputs.innerHTML +=
             `
         <div class = "p-2 d-flex flex-row flex-wrap justify-content-center form-check">
-            <p class = "p-1 flex-grow-1">${i + 1}. Játékos:</p>
-            <p class = "p-1 flex-grow-1">${players_used[i].get_nick()}</p>
-            <p class = "p-1 flex-grow-1">Játszott:</p>
-            <input type = "checkbox" value = "${i}" class = "index-${i} form-check-input">
+            <p class = "p-2 flex-grow-1">${i + 1}. Játékos:</p>
+            <p class = "p-2 flex-grow-1">${players_used[i].get_nick()}</p>
+            <p class = "p-2 flex-grow-1">Játszott:</p>
+            <input type = "checkbox" value = "${i}" class = "index-${i} form-check-input mx-1 m-2">
             <div class="invalid-feedback w-100 p-1">Több játékos mint ${games[viewed].get_max_players_in_round()}!</div>
         </div>
         `
