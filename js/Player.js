@@ -16,7 +16,13 @@ class Player {
     }
 
     set_name(name) {
-        if (name.length <= 5) {
+        var hibas = false;
+        for (let i = 0; i < name.length; i++) {
+            if ("0123456789".contains(name[i])) {
+                hibas = true;
+            }
+        }
+        if (name.length <= 5 || hibas) {
             this.#name = "Ismeretlen játékos"
         }
         else {
@@ -63,6 +69,9 @@ class Player {
     }
 
     set_game(game) {
+        if (typeof game != Game) {
+            this.#game = new Game("", [], 0);
+        }
         this.#game = game;
     }
 
