@@ -1,7 +1,7 @@
 class Game{
-    #name //Játék neve
-    #stats //Milyen stat-ok lesznek a játékban (pl.: kills vagy goals)
-    #max_players_in_round //Mennyi játékos lehet egy meccsben
+    #name
+    #stats
+    #max_players_in_round
 
     constructor(name, stat_names, max_players){
         this.set_name(name)
@@ -10,26 +10,22 @@ class Game{
         this.set_stats(stat_names)
     }
 
-    //Név validitásának ellenőrzése
     is_valid_name(name){
         return name.length >= 4 
     }
 
-    //Új név ha valid
     set_name(name){
         if(this.is_valid_name(name)){
             this.#name = name
         }
     }
 
-    //Meccsenkénti max játékosok beállítása
     set_max_players_in_round(max_players){
         if(Number.isInteger(max_players) && max_players > 0){
             this.#max_players_in_round = max_players
         }
     }
 
-    //#stats feltöltése üres listákkal --> ide jönnek majd a konkrét játékosok meccs adatai
     set_stats(stat_names){
         if(Array.isArray(stat_names)){
             for(let i = 0; i < stat_names.length; i++){
@@ -56,7 +52,6 @@ class Game{
         }
     }
 
-    //Új érték adása egy meglévő stathoz, ha az index eggyel nagyobb a legnagyobbnál, új értékként pusholja, egyébként meg csak módosítja a meglévőt
     add_stat_value(stat_name, index, value){
         if(Number.isInteger(value) && Object.keys(this.get_stats()).includes(stat_name) && index < this.get_stats()[stat_name].length){
             this.get_stats()[stat_name][index] = value
@@ -69,7 +64,6 @@ class Game{
         return false
     }
 
-    //Meglévő stathoz tartozó érték kitörlése, ha létezik
     remove_stat_value(stat_name, player_id){
         if(Object.keys(this.get_stats()).includes(stat_name) && player_id < this.get_stats()[stat_name].length){
             this.get_stats()[stat_name][player_id] = 0
@@ -78,7 +72,6 @@ class Game{
         return false;
     }
 
-    //Üres érték listák törlése --> 2d lista visszadása a feltöltött listákkal
     remove_empty(){
         var stat_values = Object.values(this.get_stats())
         var output_values = []

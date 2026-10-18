@@ -18,7 +18,7 @@ const rocket_league_players = [
 var players_used = valorant_players.slice();
 
 var chart = NaN
-var deleteID = -1;
+var delete_id = -1;
 
 const add_modal = new bootstrap.Modal(".add-modal")
 const sim_modal = new bootstrap.Modal(".sim-modal")
@@ -700,7 +700,7 @@ function edit_stat() {
 
 
 function delete_ID(index) {
-    deleteID = index;
+    delete_id = index;
 
     document.querySelector(".delete-modal-body").innerHTML = `<p>Biztosan ki szeretnéd rúgni ezt a játékost a ${(viewed) ? "Rocket League" : "Valorant"} csapatból?</p>
                                                         <p class="m-0">${(viewed) ? `${rocket_league_players[index].get_name()} (${rocket_league_players[index].get_nick()})` : `${valorant_players[index].get_name()} (${valorant_players[index].get_nick()})`}</p>`
@@ -709,17 +709,17 @@ function delete_ID(index) {
 }
 
 document.querySelector(".delete-btn").addEventListener('click', () => {
-    show_toast("Szerződés felbontva!", `${players_used[deleteID].get_name()} szerződése törlődött.`, "danger");
+    show_toast("Szerződés felbontva!", `${players_used[delete_id].get_name()} szerződése törlődött.`, "danger");
     if (!viewed) {
 
-        delete_in_bulk(games[0], players_used[deleteID].get_id())
-        valorant_players.splice(deleteID, 1)
+        delete_in_bulk(games[0], players_used[delete_id].get_id())
+        valorant_players.splice(delete_id, 1)
 
         players_used = valorant_players.slice();
     } else {
 
-        delete_in_bulk(games[1], players_used[deleteID].get_id())
-        rocket_league_players.splice(deleteID, 1)
+        delete_in_bulk(games[1], players_used[delete_id].get_id())
+        rocket_league_players.splice(delete_id, 1)
 
         players_used = rocket_league_players.slice();
     }
