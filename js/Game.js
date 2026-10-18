@@ -70,9 +70,9 @@ class Game{
     }
 
     //Meglévő stathoz tartozó érték kitörlése, ha létezik
-    remove_stat_value(stat_name, index){
-        if(Object.keys(this.get_stats()).includes(stat_name) && index < this.get_stats()[stat_name].length){
-            this.get_stats()[stat_name][index] = 0
+    remove_stat_value(stat_name, player_id){
+        if(Object.keys(this.get_stats()).includes(stat_name) && player_id < this.get_stats()[stat_name].length){
+            this.get_stats()[stat_name][player_id] = 0
             return true
         }
         return false;
