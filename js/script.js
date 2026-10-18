@@ -88,6 +88,21 @@ add_in_bulk(games[1], 0, [10, 12, 4, 1, 3, 3])
 add_in_bulk(games[1], 1, [11, 9, 7, 1, 3, 4])
 add_in_bulk(games[1], 2, [66, 34, 45, 9, 9, 9])
 
+function player_with_highest_value(game, stat_name) {
+    var max_index = -1
+    var max_value = 0
+    var tmp
+    for (let i = 0; i < players_used.length; i++) {
+        tmp = games[game].get_stats_value(stat_name, players_used[i].get_id())
+        if (tmp > max_value) {
+            max_index = i
+            max_value = tmp
+        }
+    }
+    return max_index
+}
+
+
 function win_rate(id) {
     var matches = games[viewed].get_stats_value("matches", id)
     if (matches == 0) {
@@ -393,13 +408,13 @@ function write() {
                                             </div>
                                             <div class="col">
                                                 <div class="rounded border p-3 position-relative">
-                                                    <div class="small text-secondary">Assists:</div>
+                                                    <div class="small text-secondary">MVPs:</div>
                                                     <div class="fs-3 fw-bold">
-                                                        ${games[viewed].get_stats_value("assists", id)}
+                                                        ${games[viewed].get_stats_value("mvps", id)}
                                                     </div>
                                                     <a href="#toast-header"
                                                         class="tile-edit text-secondary position-absolute top-0 end-0 m-3">
-                                                        <i class="bi bi-pencil-fill" onclick="start_edit_stat(['assists'], ${id})"></i>
+                                                        <i class="bi bi-pencil-fill" onclick="start_edit_stat(['mvps'], ${id})"></i>
                                                     </a>
                                                 </div>
                                             </div>
@@ -643,7 +658,7 @@ function start_edit_stat(values, index) {
         <div class="me-2 mb-3">
             <label>${toast_input_values[i]}</label>
             <input type = "number" class = "form-control edit-${toast_input_values[i]}" value="${games[viewed].get_stats_value(toast_input_values[i], index)}">
-            <div class="invalid-feedback"></div>
+            <div class="invalid-feedback toast-invalid"></div>
         </div>
         `
     }
@@ -653,6 +668,7 @@ function start_edit_stat(values, index) {
 function edit_stat() {
     var toast_inputfield = NaN
     var valid = true
+    var invalids = []
     for (let i = 0; i < toast_input_values.length; i++) {
         toast_inputfield = document.querySelector(`.edit-${toast_input_values[i]}`)
         toast_inputfield.classList.remove("is-invalid")
@@ -660,7 +676,8 @@ function edit_stat() {
         if (Number.parseInt(toast_inputfield.value) < 0 || Number.parseInt(toast_inputfield.value) > 1000) {
             valid = false
             toast_inputfield.classList.add("is-invalid")
-            document.querySelector(".invalid-feedback").innerHTML = "Nem adhatsz meg 0-nál kisebb vagy 1000-nél nagyobb értéket!"
+            invalids = document.querySelectorAll(".toast-invalid")
+            invalids[i].innerHTML = "Nem adhatsz meg 0-nál kisebb vagy 1000-nél nagyobb értéket!"
         }
         else if (toast_input_values.length == 2 && toast_input_values[0] == "wins" &&
             Number.parseInt(document.querySelector(`.edit-${toast_input_values[0]}`).value) > Number.parseInt(toast_inputfield.value)) {
@@ -681,19 +698,6 @@ function edit_stat() {
 
 }
 
-function player_with_highest_value(game, stat_name) {
-    var max_index = -1
-    var max_value = 0
-    var tmp
-    for (let i = 0; i < players_used.length; i++) {
-        tmp = games[game].get_stats_value(stat_name, i)
-        if (tmp > max_value) {
-            max_index = i
-            max_value = tmp
-        }
-    }
-    return max_index
-}
 
 function delete_ID(index) {
     deleteID = index;
@@ -711,9 +715,7 @@ document.querySelector(".delete-btn").addEventListener('click', () => {
         delete_in_bulk(games[0], players_used[deleteID].get_id())
         valorant_players.splice(deleteID, 1)
 
-        console.log(games[0].get_stats())
         players_used = valorant_players.slice();
-        console.log(players_used)
     } else {
 
         delete_in_bulk(games[1], players_used[deleteID].get_id())
