@@ -25,7 +25,7 @@ const sim_modal = new bootstrap.Modal(".sim-modal")
 const delete_modal = new bootstrap.Modal(".delete-modal")
 const success_toast = new bootstrap.Toast(".toast")
 
-const max_roster = [8, 5] //0 = valorant max keret, 1 = rocket_league max keret
+const max_roster = [8, 5]
 const roster_count = document.querySelector(".roster-count")
 
 const max_budget = 5_000_000
@@ -61,7 +61,7 @@ var timeouts = []
 
 var in_simulation = 0
 
-var viewed = 0//0 = valorant 1 = rocket_league
+var viewed = 0
 
 function delete_in_bulk(game, id) {
     var keys = Object.keys(game.get_stats())
@@ -70,7 +70,7 @@ function delete_in_bulk(game, id) {
     }
 }
 
-//Teszt adat feltöltés
+
 function add_in_bulk(game, id, values) {
     var keys = Object.keys(game.get_stats())
     for (let i = 0; i < keys.length; i++) {
@@ -78,16 +78,12 @@ function add_in_bulk(game, id, values) {
     }
 }
 
-//Valorant játékosok adatai
-//"kills", "assists", "deaths", "spikes", "defuses", "wins", "matches"
 add_in_bulk(games[0], 0, [15, 10, 4, 4, 3, 1, 2])
 add_in_bulk(games[0], 1, [12, 1, 10, 2, 3, 1, 1])
 add_in_bulk(games[0], 2, [38, 16, 7, 6, 9, 2, 3])
 add_in_bulk(games[0], 3, [18, 34, 21, 13, 11, 4, 6])
 add_in_bulk(games[0], 4, [98, 44, 13, 0, 38, 7, 8])
 
-//Rocket League játékosok adati
-//"goals", "assists", "saves", "mvps", "wins", "matches"
 add_in_bulk(games[1], 0, [10, 12, 4, 1, 3, 3])
 add_in_bulk(games[1], 1, [11, 9, 7, 1, 3, 4])
 add_in_bulk(games[1], 2, [66, 34, 45, 9, 9, 9])
@@ -100,10 +96,10 @@ function win_rate(id) {
     return Math.round(games[viewed].get_stats_value("wins", id) / matches * 100)
 }
 
-function team_win_rate(){
+function team_win_rate() {
     var win_rate_sum = 0
-    if(players_used.length > 0){
-        for(let i = 0; i < players_used.length; i++){
+    if (players_used.length > 0) {
+        for (let i = 0; i < players_used.length; i++) {
             win_rate_sum += win_rate(players_used[i].get_id())
         }
     }
@@ -111,22 +107,20 @@ function team_win_rate(){
     return Math.round(win_rate_sum / players_used.length)
 }
 
-//chart létrehozása, ha a felhasználó megnyitja az accordiont
 function new_chart(id) {
     if (chart) {
         chart.destroy()
     }
 
-    //chart létrehozás
     chart = new Chart(
-        document.querySelector(`.chart-${id}`),//canvas amire rakjuk
+        document.querySelector(`.chart-${id}`),
         {
-            type: "doughnut",//típusa
-            data: {//adatok 
+            type: "doughnut",
+            data: {
                 datasets: [{
                     data: [
-                        games[viewed].get_stats_value("wins", id), //wins
-                        games[viewed].get_stats_value("matches", id) - games[viewed].get_stats_value("wins", id)//nem tároljuk a vereségeket, ezért a matches - win a vereségek száma
+                        games[viewed].get_stats_value("wins", id),
+                        games[viewed].get_stats_value("matches", id) - games[viewed].get_stats_value("wins", id)
                     ],
                     backgroundColor: [
                         "#4caf50",
@@ -136,9 +130,9 @@ function new_chart(id) {
                 }],
             },
             options: {
-                animation: false,//crazy ha true-n van rezgés majd javítani kell valahogy
+                animation: false,
                 responsive: true,
-                cutout: "75%", // thin ring
+                cutout: "75%",
                 plugins: {
                     legend: {
                         display: false
@@ -182,7 +176,6 @@ function write() {
             `
 
         empty_list_text.classList.add('d-none')
-        //Játéktól függően, accordion-item-ek hozzáadása
         output_accordion.innerHTML = `
         <div class="d-flex align-items-center gap-3 mb-3">
             <h3 class="m-0">${games[viewed].get_name()} csapat</h3>
@@ -197,7 +190,7 @@ function write() {
         }
         timeouts = []
         if (!viewed) {
-            
+
             team_stats.innerHTML += (max_kills == -1) ?
                 `<p class = "text-secondary">Még nincs ölési adat!</p>`
                 :
@@ -345,7 +338,6 @@ function write() {
             for (let i = 0; i < players_used.length; i++) {
                 let id = players_used[i].get_id()
 
-                //"assists", "saves", "mvps", "wins", "matches"
                 output_accordion.innerHTML +=
                     `
                     <div class="accordion-item">
@@ -429,9 +421,9 @@ function write() {
                             </div>
                             <div class="d-flex flex-wrap align-items-center gap-2 border-top p-3 mt-3">
                                 <span class="contract-${id}">Szerződés státusza: ${players_used[i].get_contractleft() > 0 ?
-                                            `<span class="badge text-bg-success">Érvényes</span> <span
+                        `<span class="badge text-bg-success">Érvényes</span> <span
                                         class="small text-secondary">${players_used[i].get_contracttime().toLocaleDateString("hu-HU")}-ig</span>`
-                                            : "<span class='badge text-bg-danger'>Lejárt</span>"}</span>
+                        : "<span class='badge text-bg-danger'>Lejárt</span>"}</span>
                                 <span>${Intl.NumberFormat().format(players_used[i].get_pay())} Ft/hó</span>
                                 <div class="ms-auto d-flex gap-2">
                                     <button type="button" class="btn btn-outline-warning btn-sm" onclick="start_edit(${i})">Szerződés
@@ -446,7 +438,7 @@ function write() {
 
                 if (players_used[i].get_contractleft() > 0 && players_used[i].get_contractleft() < 2147483) {
                     var timeout = setTimeout(() => {
-                        document.querySelector(`.contract - ${ id } `).innerHTML = "<span class='badge text-bg-danger'>Lejárt</span>"
+                        document.querySelector(`.contract - ${id} `).innerHTML = "<span class='badge text-bg-danger'>Lejárt</span>"
                         update_badges()
                     }
                         , players_used[i].get_contractleft() * 1000
@@ -459,8 +451,6 @@ function write() {
 }
 write()
 
-
-// ai helperek
 function update_badges() {
     var active = 0
     for (let i = 0; i < players_used.length; i++) {
@@ -468,199 +458,197 @@ function update_badges() {
             active++
         }
     }
-    document.querySelector(".active-badge").textContent = `${ active } aktív szerződés`
-    document.querySelector(".expired-badge").textContent = `${ players_used.length - active } lejárt szerződés`
+    document.querySelector(".active-badge").textContent = `${active} aktív szerződés`
+    document.querySelector(".expired-badge").textContent = `${players_used.length - active} lejárt szerződés`
 }
 
 function update_roster() {
-    roster_count.textContent = `${ players_used.length }/${max_roster[viewed]}`
-            }
+    roster_count.textContent = `${players_used.length}/${max_roster[viewed]}`
+}
 
-            function show_toast(title, message, color) {
-                toast_title.textContent = title
-                toast_body.textContent = message
-                toast_square.classList.remove("bg-success", "bg-danger")
-                toast_square.classList.add("bg-" + color)
-                toast.show()
-            }
+function show_toast(title, message, color) {
+    toast_title.textContent = title
+    toast_body.textContent = message
+    toast_square.classList.remove("bg-success", "bg-danger")
+    toast_square.classList.add("bg-" + color)
+    toast.show()
+}
 
-            function used_budget() {
-                var sum = 0
-                for (let i = 0; i < players_used.length; i++) {
-                    sum += players_used[i].get_pay()
-                }
-                return sum
-            }
+function used_budget() {
+    var sum = 0
+    for (let i = 0; i < players_used.length; i++) {
+        sum += players_used[i].get_pay()
+    }
+    return sum
+}
 
-            function update_budget() {
-                var used = used_budget()
-                budget_text.textContent = `${Intl.NumberFormat().format(used)} Ft / ${Intl.NumberFormat().format(max_budget)} Ft`
-                budget_bar.style.width = Math.min(used / max_budget * 100, 100) + "%"
-            }
+function update_budget() {
+    var used = used_budget()
+    budget_text.textContent = `${Intl.NumberFormat().format(used)} Ft / ${Intl.NumberFormat().format(max_budget)} Ft`
+    budget_bar.style.width = Math.min(used / max_budget * 100, 100) + "%"
+}
 
-            function is_budget_valid(old_pay) {
-                var free = max_budget - used_budget() + old_pay
-                var valid = Number(new_pay.value) <= free
+function is_budget_valid(old_pay) {
+    var free = max_budget - used_budget() + old_pay
+    var valid = Number(new_pay.value) <= free
 
-                budget_error.textContent = `Nem fér bele a keretbe! Legfeljebb ${Intl.NumberFormat().format(free)} Ft adható.`
-                budget_error.classList.toggle("d-block", !valid)
+    budget_error.textContent = `Nem fér bele a keretbe! Legfeljebb ${Intl.NumberFormat().format(free)} Ft adható.`
+    budget_error.classList.toggle("d-block", !valid)
 
-                return valid
-            }
-            //
-
-
-            function is_valid_input() {
-                var name_valid = new_name.value.trim().length > 5
-                for (let i = 0; i < new_name.value.length; i++) {
-                    if ("0123456789".includes(new_name.value[i])) {
-                        name_valid = false;
-                    }
-                }
-                var nick_valid = new_nick.value.trim().length > 2
-
-                var date_time = new Date(new_date.value + "T" + new_time.value)
-                var date_valid = new_date.value != "" && new_time.value != "" && date_time > new Date()
-
-                new_name.classList.toggle("is-invalid", !name_valid)
-                new_nick.classList.toggle("is-invalid", !nick_valid)
-                new_date.classList.toggle("is-invalid", !date_valid)
-                new_time.classList.toggle("is-invalid", !date_valid)
-                date_error.classList.toggle("d-block", !date_valid)
-
-                return name_valid && nick_valid && date_valid
-            }
-
-            function next_id(players) {
-                if (players.length == 0) {
-                    return 0;
-                }
-                return players[players.length - 1].get_id() + 1;
-            }
-
-            function add_player() {
-                if (!is_valid_input() || !is_budget_valid(0)) {
-                    return;
-                } else {
-                    var date_parts = new_date.value.split("-");
-                    var time_parts = new_time.value.split(":");
-                    var date_time = new Date(
-                        parseInt(date_parts[0]),
-                        parseInt(date_parts[1]) - 1,
-                        parseInt(date_parts[2]),
-                        parseInt(time_parts[0]),
-                        parseInt(time_parts[1])
-                    );
-                    if (!viewed) {
-                        var p = new Player(new_name.value, new_nick.value, next_id(valorant_players), new_pay.value, games[0], date_time);
-                        add_in_bulk(games[0], next_id(valorant_players), [0, 0, 0, 0, 0, 0, 0])
-                        valorant_players.push(p);
-                        players_used = valorant_players.slice()
-                    } else {
-                        var p = new Player(new_name.value, new_nick.value, next_id(rocket_league_players), new_pay.value, games[1], date_time);
-                        add_in_bulk(games[1], next_id(rocket_league_players), [0, 0, 0, 0, 0, 0])
-                        rocket_league_players.push(p);
-                        players_used = rocket_league_players.slice()
-                    }
-
-                    add_modal.hide();
-                    write();
-
-                    new_name.value = new_nick.value = new_date.value = new_time.value = "";
-                    new_pay.value = 20000;
-                    rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
+    return valid
+}
 
 
-                    show_toast("Játékos igazolva!", `${p.get_name()} szerződése felvételre került.`, "success");
-                }
-            }
+function is_valid_input() {
+    var name_valid = new_name.value.trim().length > 5
+    for (let i = 0; i < new_name.value.length; i++) {
+        if ("0123456789".includes(new_name.value[i])) {
+            name_valid = false;
+        }
+    }
+    var nick_valid = new_nick.value.trim().length > 2
 
-            //Szerződés szerkesztése
-            function start_edit(index) {
-                edit_index = index
+    var date_time = new Date(new_date.value + "T" + new_time.value)
+    var date_valid = new_date.value != "" && new_time.value != "" && date_time > new Date()
 
-                add_modal.show()
-                document.querySelector(".add-header").classList.remove("bg-success")
-                document.querySelector(".add-header").classList.add("bg-warning")
-                document.querySelector(".add-header h5").innerHTML = "Szerződés módosítása"
+    new_name.classList.toggle("is-invalid", !name_valid)
+    new_nick.classList.toggle("is-invalid", !nick_valid)
+    new_date.classList.toggle("is-invalid", !date_valid)
+    new_time.classList.toggle("is-invalid", !date_valid)
+    date_error.classList.toggle("d-block", !date_valid)
 
-                document.querySelector(".add-btn").classList.remove("btn-success")
-                document.querySelector(".add-btn").classList.add("btn-warning")
-                document.querySelector(".add-btn").setAttribute("onclick", "edit_player()")
+    return name_valid && nick_valid && date_valid
+}
+
+function next_id(players) {
+    if (players.length == 0) {
+        return 0;
+    }
+    return players[players.length - 1].get_id() + 1;
+}
+
+function add_player() {
+    if (!is_valid_input() || !is_budget_valid(0)) {
+        return;
+    } else {
+        var date_parts = new_date.value.split("-");
+        var time_parts = new_time.value.split(":");
+        var date_time = new Date(
+            parseInt(date_parts[0]),
+            parseInt(date_parts[1]) - 1,
+            parseInt(date_parts[2]),
+            parseInt(time_parts[0]),
+            parseInt(time_parts[1])
+        );
+        if (!viewed) {
+            var p = new Player(new_name.value, new_nick.value, next_id(valorant_players), new_pay.value, games[0], date_time);
+            add_in_bulk(games[0], next_id(valorant_players), [0, 0, 0, 0, 0, 0, 0])
+            valorant_players.push(p);
+            players_used = valorant_players.slice()
+        } else {
+            var p = new Player(new_name.value, new_nick.value, next_id(rocket_league_players), new_pay.value, games[1], date_time);
+            add_in_bulk(games[1], next_id(rocket_league_players), [0, 0, 0, 0, 0, 0])
+            rocket_league_players.push(p);
+            players_used = rocket_league_players.slice()
+        }
+
+        add_modal.hide();
+        write();
+
+        new_name.value = new_nick.value = new_date.value = new_time.value = "";
+        new_pay.value = 20000;
+        rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
 
 
-                new_name.classList.remove("is-invalid")
-                new_name.value = players_used[edit_index].get_name()
-                new_nick.classList.remove("is-invalid")
-                new_nick.value = players_used[edit_index].get_nick()
+        show_toast("Játékos igazolva!", `${p.get_name()} szerződése felvételre került.`, "success");
+    }
+}
 
-                new_pay.value = players_used[edit_index].get_pay()
-                rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
+function start_edit(index) {
+    edit_index = index
 
-                new_date.valueAsDate = players_used[edit_index].get_contracttime()
-                new_date.classList.remove("is-invalid")
-                new_time.valueAsDate = players_used[edit_index].get_contracttime();
-                new_time.classList.remove("is-invalid")
+    add_modal.show()
+    document.querySelector(".add-header").classList.remove("bg-success")
+    document.querySelector(".add-header").classList.add("bg-warning")
+    document.querySelector(".add-header h5").innerHTML = "Szerződés módosítása"
 
-                date_error.classList.remove("d-block")
-                budget_error.classList.remove("d-block")
-            }
+    document.querySelector(".add-btn").classList.remove("btn-success")
+    document.querySelector(".add-btn").classList.add("btn-warning")
+    document.querySelector(".add-btn").setAttribute("onclick", "edit_player()")
 
-            function edit_player() {
-                if (!is_valid_input() || !is_budget_valid(players_used[edit_index].get_pay())) {
-                    return;
-                }
-                else {
-                    var date_parts = new_date.value.split("-");
-                    var time_parts = new_time.value.split(":");
-                    var date_time = new Date(
-                        parseInt(date_parts[0]),
-                        parseInt(date_parts[1]) - 1,
-                        parseInt(date_parts[2]),
-                        parseInt(time_parts[0]),
-                        parseInt(time_parts[1])
-                    );
 
-                    players_used[edit_index].set_name(new_name.value)
-                    players_used[edit_index].set_nick(new_nick.value)
-                    players_used[edit_index].set_pay(new_pay.value)
-                    players_used[edit_index].set_game(games[viewed])
-                    players_used[edit_index].set_contracttime(date_time)
+    new_name.classList.remove("is-invalid")
+    new_name.value = players_used[edit_index].get_name()
+    new_nick.classList.remove("is-invalid")
+    new_nick.value = players_used[edit_index].get_nick()
 
-                    add_modal.hide();
-                    write();
+    new_pay.value = players_used[edit_index].get_pay()
+    rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
 
-                    new_name.value = new_nick.value = new_date.value = "";
-                    new_pay.value = 20000;
-                    rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
-                }
-            }
+    new_date.valueAsDate = players_used[edit_index].get_contracttime()
+    new_date.classList.remove("is-invalid")
+    new_time.valueAsDate = players_used[edit_index].get_contracttime();
+    new_time.classList.remove("is-invalid")
+
+    date_error.classList.remove("d-block")
+    budget_error.classList.remove("d-block")
+}
+
+function edit_player() {
+    if (!is_valid_input() || !is_budget_valid(players_used[edit_index].get_pay())) {
+        return;
+    }
+    else {
+        var date_parts = new_date.value.split("-");
+        var time_parts = new_time.value.split(":");
+        var date_time = new Date(
+            parseInt(date_parts[0]),
+            parseInt(date_parts[1]) - 1,
+            parseInt(date_parts[2]),
+            parseInt(time_parts[0]),
+            parseInt(time_parts[1])
+        );
+
+        players_used[edit_index].set_name(new_name.value)
+        players_used[edit_index].set_nick(new_nick.value)
+        players_used[edit_index].set_pay(new_pay.value)
+        players_used[edit_index].set_game(games[viewed])
+        players_used[edit_index].set_contracttime(date_time)
+
+        add_modal.hide();
+        write();
+
+        new_name.value = new_nick.value = new_date.value = "";
+        new_pay.value = 20000;
+        rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
+    }
+}
 document.addEventListener("click", (e) => {
     if (toast_input_live.classList.contains("show") && !toast_input_live.contains(e.target) && !e.target.closest(".bi-pencil-fill")) {
         toast_input.hide()
     }
 })
 
-            function start_edit_stat(values, index) {
-                toast_input_values = values
-                edit_stat_index = index
-                toast_input = bootstrap.Toast.getOrCreateInstance(toast_input_live, { delay: 25000 })
-                toast_input.show()
-                toast_form = document.querySelector(".toast-form")
-                toast_form.innerHTML = ""
+function start_edit_stat(values, index) {
+    toast_input_values = values
+    edit_stat_index = index
+    toast_input = bootstrap.Toast.getOrCreateInstance(toast_input_live, { delay: 25000 })
+    toast_input.show()
+    toast_form = document.querySelector(".toast-form")
+    toast_form.innerHTML = ""
 
-                for (let i = 0; i < toast_input_values.length; i++) {
-                    toast_form.innerHTML +=
-                        `
+    for (let i = 0; i < toast_input_values.length; i++) {
+        toast_form.innerHTML +=
+            `
         <div class="me-2 mb-3">
             <label>${toast_input_values[i]}</label>
             <input type = "number" class = "form-control edit-${toast_input_values[i]}" value="${games[viewed].get_stats_value(toast_input_values[i], index)}">
             <div class="invalid-feedback"></div>
         </div>
         `
-                }
+    }
 
-            }
+}
 
 function edit_stat() {
     var toast_inputfield = NaN
@@ -691,98 +679,96 @@ function edit_stat() {
         write()
     }
 
-            }
+}
 
-            function player_with_highest_value(game, stat_name) {
-                var max_index = -1
-                var max_value = 0
-                var tmp
-                for (let i = 0; i < players_used.length; i++) {
-                    tmp = games[game].get_stats_value(stat_name, i)
-                    if (tmp > max_value) {
-                        max_index = i
-                        max_value = tmp
-                    }
-                }
-                return max_index
-            }
+function player_with_highest_value(game, stat_name) {
+    var max_index = -1
+    var max_value = 0
+    var tmp
+    for (let i = 0; i < players_used.length; i++) {
+        tmp = games[game].get_stats_value(stat_name, i)
+        if (tmp > max_value) {
+            max_index = i
+            max_value = tmp
+        }
+    }
+    return max_index
+}
 
-            function delete_ID(index) {
-                deleteID = index;
+function delete_ID(index) {
+    deleteID = index;
 
-                document.querySelector(".delete-modal-body").innerHTML = `<p>Biztosan ki szeretnéd rúgni ezt a játékost a ${(viewed) ? "Rocket League" : "Valorant"} csapatból?</p>
+    document.querySelector(".delete-modal-body").innerHTML = `<p>Biztosan ki szeretnéd rúgni ezt a játékost a ${(viewed) ? "Rocket League" : "Valorant"} csapatból?</p>
                                                         <p class="m-0">${(viewed) ? `${rocket_league_players[index].get_name()} (${rocket_league_players[index].get_nick()})` : `${valorant_players[index].get_name()} (${valorant_players[index].get_nick()})`}</p>`
 
-                delete_modal.show();
-            }
+    delete_modal.show();
+}
 
-            document.querySelector(".delete-btn").addEventListener('click', () => {
-                show_toast("Szerződés felbontva!", `${players_used[deleteID].get_name()} szerződése törlődött.`, "danger");
-                if (!viewed) {
+document.querySelector(".delete-btn").addEventListener('click', () => {
+    show_toast("Szerződés felbontva!", `${players_used[deleteID].get_name()} szerződése törlődött.`, "danger");
+    if (!viewed) {
 
-                    delete_in_bulk(games[0], players_used[deleteID].get_id())
-                    valorant_players.splice(deleteID, 1)
+        delete_in_bulk(games[0], players_used[deleteID].get_id())
+        valorant_players.splice(deleteID, 1)
 
-                    console.log(games[0].get_stats())
-                    players_used = valorant_players.slice();
-                    console.log(players_used)
-                } else {
+        console.log(games[0].get_stats())
+        players_used = valorant_players.slice();
+        console.log(players_used)
+    } else {
 
-                    delete_in_bulk(games[1], players_used[deleteID].get_id())
-                    rocket_league_players.splice(deleteID, 1)
+        delete_in_bulk(games[1], players_used[deleteID].get_id())
+        rocket_league_players.splice(deleteID, 1)
 
-                    players_used = rocket_league_players.slice();
-                }
-                write();
+        players_used = rocket_league_players.slice();
+    }
+    write();
 
-            })
+})
 
-            //Játék-nézet váltás
-            document.querySelector(".valorant_btn").addEventListener("click", () => {
-                viewed = 0
-                players_used = valorant_players.slice()
-                document.querySelector(".valorant_btn").classList.add("active")
-                document.querySelector(".rocket_league_btn").classList.remove("active")
-                write()
-            })
+document.querySelector(".valorant_btn").addEventListener("click", () => {
+    viewed = 0
+    players_used = valorant_players.slice()
+    document.querySelector(".valorant_btn").classList.add("active")
+    document.querySelector(".rocket_league_btn").classList.remove("active")
+    write()
+})
 
-            document.querySelector(".rocket_league_btn").addEventListener("click", () => {
-                viewed = 1
-                players_used = rocket_league_players.slice()
-                document.querySelector(".rocket_league_btn").classList.add("active")
-                document.querySelector(".valorant_btn").classList.remove("active")
-                write()
-            })
+document.querySelector(".rocket_league_btn").addEventListener("click", () => {
+    viewed = 1
+    players_used = rocket_league_players.slice()
+    document.querySelector(".rocket_league_btn").classList.add("active")
+    document.querySelector(".valorant_btn").classList.remove("active")
+    write()
+})
 
-            //add-modal
-            rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
-            rangeInput.addEventListener('input', () => {
-                rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
-            });
+rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
+rangeInput.addEventListener('input', () => {
+    rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
+});
 
-            document.querySelector(".add-modalbtn").addEventListener('click', () => {
-                if (players_used.length >= max_roster[viewed]) {
-                    show_toast("Megtelt a keret!", `A ${games[viewed].get_name()} csapatban legfeljebb ${max_roster[viewed]} játékos lehet.`, "danger")
-                    return
-                }
-                new_name.value = new_nick.value = new_date.value = new_time.value = "";
-                new_pay.value = 20000;
-                add_modal.show();
-                new_name.classList.remove("is-invalid")
-                new_nick.classList.remove("is-invalid")
-                new_date.classList.remove("is-invalid")
-                new_time.classList.remove("is-invalid")
-                date_error.classList.remove("d-block")
-                budget_error.classList.remove("d-block")
+document.querySelector(".add-modalbtn").addEventListener('click', () => {
+    if (players_used.length >= max_roster[viewed]) {
+        show_toast("Megtelt a keret!", `A ${games[viewed].get_name()} csapatban legfeljebb ${max_roster[viewed]} játékos lehet.`, "danger")
+        return
+    }
+    new_name.value = new_nick.value = new_date.value = new_time.value = "";
+    new_pay.value = 20000;
+    add_modal.show();
+    new_name.classList.remove("is-invalid")
+    new_nick.classList.remove("is-invalid")
+    new_date.classList.remove("is-invalid")
+    new_time.classList.remove("is-invalid")
+    date_error.classList.remove("d-block")
+    budget_error.classList.remove("d-block")
 
-                document.querySelector(".add-header").classList.remove("bg-warning")
-                document.querySelector(".add-header").classList.add("bg-success")
-                document.querySelector(".add-header h5").innerHTML = "Új játékos igazolása"
+    document.querySelector(".add-header").classList.remove("bg-warning")
+    document.querySelector(".add-header").classList.add("bg-success")
+    document.querySelector(".add-header h5").innerHTML = "Új játékos igazolása"
 
-                document.querySelector(".add-btn").classList.remove("btn-warning")
-                document.querySelector(".add-btn").classList.add("btn-success")
-                document.querySelector(".add-btn").setAttribute("onclick", "add_player()")
-            })
+    document.querySelector(".add-btn").classList.remove("btn-warning")
+    document.querySelector(".add-btn").classList.add("btn-success")
+    document.querySelector(".add-btn").setAttribute("onclick", "add_player()")
+})
 
 
 
@@ -797,7 +783,7 @@ document.querySelector(".sim-modalbtn").addEventListener("click", () => {
         if (players_used[i].get_contractleft() != "Lejárt") {
             in_simulation++
             inputs.innerHTML +=
-                        `
+                `
                         <label class="sim-row d-flex flex-wrap align-items-center gap-3 border rounded p-3 mb-2">
                             <div>
                                 <div class="fw-bold">${players_used[i].get_name()}</div>
@@ -814,58 +800,57 @@ document.querySelector(".sim-modalbtn").addEventListener("click", () => {
 
 })
 
-            //szimuláció indítása
-            document.querySelector(".sim-btn").addEventListener("click", () => {
+document.querySelector(".sim-btn").addEventListener("click", () => {
 
-                var inputs = []
-                var checkbox = ""
-                for (let i = 0; i < in_simulation; i++) {
-                    checkbox = document.querySelector(`.index-${i}`)
-                    if (checkbox.checked) {
-                        inputs.push(checkbox)
-                        checkbox.classList.remove("is-invalid")
-                    }
-                }
+    var inputs = []
+    var checkbox = ""
+    for (let i = 0; i < in_simulation; i++) {
+        checkbox = document.querySelector(`.index-${i}`)
+        if (checkbox.checked) {
+            inputs.push(checkbox)
+            checkbox.classList.remove("is-invalid")
+        }
+    }
 
-                in_simulation = 0
+    in_simulation = 0
 
-                var input_len = inputs.length
-                var id = -1
-                var wins = 0
-                if (input_len <= games[viewed].get_max_players_in_round()) {
-                    wins = Math.floor(Math.random() * (0.51 * input_len))
-                    for (let i = 0; i < input_len; i++) {
-                        id = Number.parseInt(inputs[i].value)
-                        if (!viewed) {
+    var input_len = inputs.length
+    var id = -1
+    var wins = 0
+    if (input_len <= games[viewed].get_max_players_in_round()) {
+        wins = Math.floor(Math.random() * (0.51 * input_len))
+        for (let i = 0; i < input_len; i++) {
+            id = Number.parseInt(inputs[i].value)
+            if (!viewed) {
 
-                            add_in_bulk(games[0], id, [
-                                games[0].get_stats_value("kills", id) + Math.floor(Math.random() * (6.5 * input_len)),
-                                games[0].get_stats_value("assists", id) + Math.floor(Math.random() * (6.5 * input_len)),
-                                games[0].get_stats_value("deaths", id) + Math.floor(Math.random() * (80 / input_len)),
-                                games[0].get_stats_value("spikes", id) + Math.floor(Math.random() * (1.5 * input_len)),
-                                games[0].get_stats_value("defuses", id) + Math.floor(Math.random() * (1.5 * input_len)),
-                                games[0].get_stats_value("wins", id) + wins,
-                                games[0].get_stats_value("matches", id) + 1,
-                            ])
-                        }
-                        else {
-                            add_in_bulk(games[1], id, [
-                                games[1].get_stats_value("goals", id) + Math.floor(Math.random() * (5.2 * input_len)),
-                                games[1].get_stats_value("assists", id) + Math.floor(Math.random() * (5.2 * input_len)),
-                                games[1].get_stats_value("saves", id) + Math.floor(Math.random() * (5.2 * input_len)),
-                                games[1].get_stats_value("mvps", id) + Math.floor(Math.random() * 2),
-                                games[1].get_stats_value("wins", id) + wins,
-                                games[1].get_stats_value("matches", id) + 1,
-                            ])
-                        }
-                    }
-                    sim_modal.hide()
-                    write()
-                }
-                else {
-                    for (let i = 1; i <= input_len - games[viewed].get_max_players_in_round(); i++) {
-                        inputs[inputs.length - i].classList.add("is-invalid")
-                    }
-                }
+                add_in_bulk(games[0], id, [
+                    games[0].get_stats_value("kills", id) + Math.floor(Math.random() * (6.5 * input_len)),
+                    games[0].get_stats_value("assists", id) + Math.floor(Math.random() * (6.5 * input_len)),
+                    games[0].get_stats_value("deaths", id) + Math.floor(Math.random() * (80 / input_len)),
+                    games[0].get_stats_value("spikes", id) + Math.floor(Math.random() * (1.5 * input_len)),
+                    games[0].get_stats_value("defuses", id) + Math.floor(Math.random() * (1.5 * input_len)),
+                    games[0].get_stats_value("wins", id) + wins,
+                    games[0].get_stats_value("matches", id) + 1,
+                ])
+            }
+            else {
+                add_in_bulk(games[1], id, [
+                    games[1].get_stats_value("goals", id) + Math.floor(Math.random() * (5.2 * input_len)),
+                    games[1].get_stats_value("assists", id) + Math.floor(Math.random() * (5.2 * input_len)),
+                    games[1].get_stats_value("saves", id) + Math.floor(Math.random() * (5.2 * input_len)),
+                    games[1].get_stats_value("mvps", id) + Math.floor(Math.random() * 2),
+                    games[1].get_stats_value("wins", id) + wins,
+                    games[1].get_stats_value("matches", id) + 1,
+                ])
+            }
+        }
+        sim_modal.hide()
+        write()
+    }
+    else {
+        for (let i = 1; i <= input_len - games[viewed].get_max_players_in_round(); i++) {
+            inputs[inputs.length - i].classList.add("is-invalid")
+        }
+    }
 
-            })
+})
