@@ -1,19 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Clarity+City:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 body {
-    font-family: "Clarity City", sans-serif;
-    font-optical-sizing: auto;
+    font-family: "Barlow", sans-serif;
     font-weight: 400;
     font-style: normal;
-    font-size: 16px;
+    background: linear-gradient(180deg, #0e0d14 0%, #1d1b3a 100%) fixed !important;
+    color: #eef0f6 !important;
+    min-height: 100vh;
 }
 
 .nav-item {
     cursor: pointer;
 }
 
-.bi-pencil-fill:hover, a:hover{
-    color: #888;
+.bi-pencil-fill:hover, a:hover {
+    color: #888 !important;
 }
 
 .toast-square {
@@ -21,36 +22,166 @@ body {
     height: 20px;
 }
 
-.accordion{
+/*ai*/
+.accordion {
     min-width: 250px !important;
 }
 
-@media(max-width: 780px){
-    canvas{
-        max-width: 200px;
-        max-height: 200px;
-    }
+.accordion .accordion-item {
+    background-color: transparent !important;
+    border: 1px solid #2e2c40 !important;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
 }
 
-@media(max-width: 500px){
-    canvas{
-        max-width: 100px;
-        max-height: 100px;
-    }
+.accordion-button {
+    background-color: transparent !important;
 }
 
-@media(min-width: 780px){
-    canvas{
-        min-width: 200px;
-        min-height: 200px;
-    }
+.accordion-button:not(.collapsed) {
+    background-color: rgba(212, 244, 0, 0.06) !important;
+    color: #d4f400 !important;
+    box-shadow: none !important;
 }
 
-@media(min-width: 991px){
-    canvas{
-        min-width: 280px;
-        min-height: 280px;
-        max-width: 350px;
-        max-height: 350px;
-    }
+.accordion-button:not(.collapsed)::after {
+    filter: grayscale(1) brightness(2);
+}
+
+.accordion-button:focus {
+    box-shadow: 0 0 0 0.2rem rgba(212, 244, 0, 0.2) !important;
+}
+
+.chart-wrap {
+    max-width: 160px;
+}
+
+.chart-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+/**/
+
+.text-secondary {
+    color: #9a98b0 !important;
+}
+
+.border,
+.border-top {
+    border-color: #2e2c40 !important;
+}
+
+main .shadow {
+    background-color: #17161f;
+    box-shadow: 0 0 24px rgba(212, 244, 0, 0.08) !important;
+}
+
+.bg-body-tertiary,
+.toast,
+.toast-header {
+    background-color: #17161f !important;
+}
+
+.navbar {
+    border-bottom: 1px solid #2e2c40;
+}
+
+.navbar-nav .nav-link.active {
+    color: #d4f400 !important;
+}
+
+.btn-success,
+.btn-warning,
+.btn-primary {
+    color: #0e0d14 !important;
+    background-color: #d4f400 !important;
+    border-color: #d4f400 !important;
+}
+
+.btn-success:hover,
+.btn-warning:hover,
+.btn-primary:hover {
+    background-color: #e4ff3a !important;
+    border-color: #e4ff3a !important;
+}
+
+.btn-success:active,
+.btn-warning:active,
+.btn-primary:active {
+    background-color: #b8d400 !important;
+    border-color: #b8d400 !important;
+}
+
+.btn-outline-warning {
+    color: #d4f400 !important;
+    background-color: transparent !important;
+    border-color: #d4f400 !important;
+}
+
+.btn-outline-warning:hover {
+    color: #0e0d14 !important;
+    background-color: #d4f400 !important;
+}
+
+.btn-secondary {
+    color: #eef0f6 !important;
+    background-color: transparent !important;
+    border-color: #2e2c40 !important;
+}
+
+.btn-secondary:hover {
+    background-color: #2e2c40 !important;
+    border-color: #9a98b0 !important;
+}
+
+.bg-success,
+.bg-warning,
+.text-bg-success {
+    background-color: #d4f400 !important;
+}
+
+.text-bg-success {
+    color: #0e0d14 !important;
+}
+
+.progress {
+    background-color: #2e2c40 !important;
+}
+
+.modal-content {
+    background-color: #17161f !important;
+    border-color: #2e2c40 !important;
+}
+
+.modal-header.bg-success,
+.modal-header.bg-warning {
+    color: #0e0d14;
+}
+
+.modal-header.bg-success .btn-close,
+.modal-header.bg-warning .btn-close {
+    filter: none;
+}
+
+.form-control {
+    background-color: #0e0d14 !important;
+}
+
+.form-control:focus:not(.is-invalid) {
+    border-color: #d4f400 !important;
+    box-shadow: 0 0 0 0.2rem rgba(212, 244, 0, 0.2) !important;
+}
+
+.form-range::-webkit-slider-thumb {
+    background-color: #d4f400 !important;
+}
+
+.form-range::-moz-range-thumb {
+    background-color: #d4f400 !important;
 }

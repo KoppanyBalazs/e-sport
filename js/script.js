@@ -13,7 +13,7 @@ const valorant_players = [
 const rocket_league_players = [
     new Player("Nagy Feró", "nyolc_ora_munka", 0, 100_000, games[1], new Date(2026, 9, 19, 23, 30, 0, 0)),
     new Player("Gregor Bence", "kolbi", 1, 1, games[1], new Date(2075, 11, 31, 24, 59, 0, 0)),
-    new Player("Benjamin", "bibi_bomb_children", 2, 1_000_000, games[1], new Date(2001, 8, 10, 0, 0, 0, 0)),
+    new Player("Benjamin", "big_yahoo271", 2, 1_000_000, games[1], new Date(2001, 8, 10, 0, 0, 0, 0)),
 ]
 var players_used = valorant_players.slice();
 
@@ -24,6 +24,14 @@ const add_modal = new bootstrap.Modal(".add-modal")
 const sim_modal = new bootstrap.Modal(".sim-modal")
 const delete_modal = new bootstrap.Modal(".delete-modal")
 const success_toast = new bootstrap.Toast(".toast")
+
+const max_roster = [8, 5] //0 = valorant max keret, 1 = rocket_league max keret
+const roster_count = document.querySelector(".roster-count")
+
+const max_budget = 5_000_000
+const budget_text = document.querySelector(".budget-text")
+const budget_bar = document.querySelector(".budget-bar")
+const budget_error = document.querySelector(".budget-error")
 
 var toast_input = NaN
 var toast_input_values = []
@@ -99,18 +107,28 @@ function new_chart(id) {
         document.querySelector(`.chart-${id}`),//canvas amire rakjuk
         {
             type: "doughnut",//típusa
-            data: {//adatok
+            data: {//adatok 
                 datasets: [{
                     data: [
                         games[viewed].get_stats_value("wins", id), //wins
                         games[viewed].get_stats_value("matches", id) - games[viewed].get_stats_value("wins", id)//nem tároljuk a vereségeket, ezért a matches - win a vereségek száma
-                    ]
+                    ],
+                    backgroundColor: [
+                    "#4caf50",  
+                    "#555555" 
+                    ],
+                    borderWidth: 0
                 }],
-                labels: ["wins", "losses"]
             },
             options: {
                 animation: false,//crazy ha true-n van rezgés majd javítani kell valahogy
-                responsive: true
+                responsive: true,
+                cutout: "75%", // thin ring
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
             }
 
         }
@@ -131,25 +149,156 @@ function write() {
     team_stats.innerHTML = ""
     output_accordion.innerHTML = ""
     var id = -1
-
+    update_budget()
+    update_roster()
     if (players_used.length == 0) {
         empty_list_text.classList.remove('d-none');
         team_stats.innerHTML = "<p>Nincs adat!</p>"
     } else {
         empty_list_text.classList.add('d-none')
         //Játéktól függően, accordion-item-ek hozzáadása
-        output_accordion.innerHTML = `<h3 class = "text-center">${games[viewed].get_name()} csapat</h3>`
+        output_accordion.innerHTML = `
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <h3 class="m-0">${games[viewed].get_name()} csapat</h3>
+            <span class="badge text-bg-success active-badge ms-auto"></span>
+            <span class="badge text-bg-danger expired-badge"></span>
+        </div>`
+        update_badges()
         for (let i = 0; i < timeouts.length; i++) {
             clearTimeout(timeouts[i])
         }
         timeouts = []
         if (!viewed) {
-            team_stats.innerHTML =
+            team_stats.innerHTML = (max_kills == -1) ?
+                `<p>Még nincs adat!</p>`
+                : 
                 `
                 <p>Játékos a legtöbb öléssel: ${players_used[max_kills].get_name()} (${games[viewed].get_stats_value("kills", max_kills)})</p>
                 `
             for (let i = 0; i < players_used.length; i++) {
-                id = players_used[i].get_id()
+                let id = players_used[i].get_id()
+
+                output_accordion.innerHTML +=
+                    `
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" onclick="new_chart(${id})"
+                data-bs-toggle="collapse" data-bs-target="#acc-${i}" aria-expanded="false" aria-controls="acc-${i}">
+                ${players_used[i].get_name()} - ${players_used[i].get_nick()}
+            </button>
+        </h2>
+        <div id="acc-${i}" class="accordion-collapse collapse" data-bs-parent=".output">
+            <div class="accordion-body p-3">
+                <div class="row g-3 align-items-center">
+                    <div class="col-12 col-md-8">
+                        <div class="row row-cols-2 g-3">
+                            <div class="col">
+                                <div class="rounded border p-3 position-relative">
+                                    <div class="small text-secondary">Spikes:</div>
+                                    <div class="fs-3 fw-bold">
+                                        ${games[viewed].get_stats_value("spikes", id)}
+                                    </div>
+                                    <a href="#toast-header"
+                                        class="tile-edit text-secondary position-absolute top-0 end-0 m-3">
+                                        <i class="bi bi-pencil-fill" onclick="start_edit_stat(['spikes'], ${id})"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="rounded border p-3 position-relative">
+                                    <div class="small text-secondary">Defuses:</div>
+                                    <div class="fs-3 fw-bold">
+                                        ${games[viewed].get_stats_value("defuses", id)}
+                                    </div>
+                                    <a href="#toast-header"
+                                        class="tile-edit text-secondary position-absolute top-0 end-0 m-3">
+                                        <i class="bi bi-pencil-fill" onclick="start_edit_stat(['defuses'], ${id})"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div class="rounded border p-3 position-relative">
+                                    <div class="small text-secondary">K/D:</div>
+                                    <div class="fs-3 fw-bold">
+                                        ${(games[viewed].get_stats_value("deaths", id)>0) ?
+                                        ((games[viewed].get_stats_value("kills", id) /
+                                        games[viewed].get_stats_value("deaths", id))).toFixed(1)
+                                        :`${games[viewed].get_stats_value("kills", id)}`}
+                                    </div>
+                                    <a href="#toast-header"
+                                        class="tile-edit text-secondary position-absolute top-0 end-0 m-3">
+                                        <i class="bi bi-pencil-fill"
+                                            onclick="start_edit_stat(['kills', 'deaths'], ${id})"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="rounded border p-3 position-relative">
+                                    <div class="small text-secondary">Assists:</div>
+                                    <div class="fs-3 fw-bold">
+                                        ${games[viewed].get_stats_value("assists", id)}
+                                    </div>
+                                    <a href="#toast-header"
+                                        class="tile-edit text-secondary position-absolute top-0 end-0 m-3">
+                                        <i class="bi bi-pencil-fill" onclick="start_edit_stat(['assists'], ${id})"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="chart-wrap position-relative mx-auto">
+                            <canvas class="chart-${id}"></canvas>
+                            <div class="chart-center">
+                                <span class="fs-3 fw-bold">${win_rate(id)}%</span>
+                                <span class="small text-secondary">win rate</span>
+                            </div>
+                            <a href="#toast-header" class="text-secondary position-absolute top-0 end-0">
+                                <i class="bi bi-pencil-fill" onclick="start_edit_stat(['wins', 'matches'], ${id})"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-2 border-top p-3 mt-3">
+                <span class="contract-${id}">Szerződés státusza: ${players_used[i].get_contractleft() > 0 ?
+                    `<span class="badge text-bg-success">Érvényes</span> <span
+                        class="small text-secondary">${players_used[i].get_contracttime().toLocaleDateString("hu-HU")}-ig</span>`
+                    : "<span class='badge text-bg-danger'>Lejárt</span>"}</span>
+                <span>${Intl.NumberFormat().format(players_used[i].get_pay())} Ft/hó</span>
+                <div class="ms-auto d-flex gap-2">
+                    <button type="button" class="btn btn-outline-warning btn-sm" onclick="start_edit(${i})">Szerződés
+                        szerkesztése</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="delete_ID(${i})">Szerződés
+                        bontás</button>
+                </div>
+            </div>
+        </div>
+    </div>
+                    `
+
+                if (players_used[i].get_contractleft() > 0 && players_used[i].get_contractleft() < 2147483) {
+                    var timeout = setTimeout(() => {
+                        document.querySelector(`.contract-${id}`).innerHTML = "Szerződés státusza: <span class='badge text-bg-danger'>Lejárt</span>"
+                        update_badges()
+                    }
+                        , players_used[i].get_contractleft() * 1000
+                    )
+                    timeouts.push(timeout)
+                }
+            }
+        }
+        else {
+            team_stats.innerHTML = (max_goals == -1) ?
+                `<p>Még nincs adat!</p>`
+                : 
+                `
+                <p>Játékos a legtöbb góllal: ${players_used[max_goals].get_name()} (${games[viewed].get_stats_value("goals", max_goals)})</p>
+                `
+            for (let i = 0; i < players_used.length; i++) {
+                let id = players_used[i].get_id()
 
                 output_accordion.innerHTML +=
                     `
@@ -161,71 +310,19 @@ function write() {
                     </button>
                 </h2>
                 <div id="acc-${i}" class="accordion-collapse collapse" data-bs-parent = ".output">
-                    <div class="accordion-body p-1">
-                        <button type="button" class="btn btn-warning accordion-btn" onclick = "start_edit(${i})">Szerződés szerkesztése</button>
-                        <div class="row g-2">
-                            <div class = "d-flex flex-row">
-                                <div class = "p-2 flex-grow-1">
-                                    <p class = "p-2 fw-bold">Spikes: ${games[viewed].get_stats_value("spikes", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['spikes'], ${id})"></i></a></p>
-                                    <p class = "p-2 fw-bold">Defuses: ${games[viewed].get_stats_value("defuses", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['defuses'], ${id})"></i></a></p>
-                                    <p class = "p-2 fw-bold">K/D: ${games[viewed].get_stats_value("kills", id) / games[viewed].get_stats_value("deaths", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['kills', 'deaths'], ${id})"></i></a></p>
-                                    <p class = "p-2">Assists: ${games[viewed].get_stats_value("assists", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['assists'], ${id})"></i></a></p>
-                                    <p class = "px-2 pt-5">Fizetés: ${players_used[i].get_pay()}/hó</p>
-                                    <p class = "p-2 contract-${id}">Szerződés státusza: ${players_used[i].get_contractleft() > 0 ? `érvényes ${players_used[i].get_contracttime().toDateString()}-ig` : "<strong class = 'text-danger'>Lejárt</strong>"}</p>
-                                </div>
-                                <a href= "#toast-header" class = "px-1 py-3"><i class = "bi bi-pencil-fill" onclick = "start_edit_stat(['wins', 'matches'], ${id})"></i></a>
-                                <div class = "p-2 flex-grow-1"><canvas class = "chart-${id}"><canvas></div>
-                            </div>
-                        </div>
-                        <div class="text-end mt-2">
-                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="delete_ID(${i})">Játékos törlése</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            `
-
-                if (players_used[i].get_contractleft() > 0) {
-                    var timeout = setTimeout(() => {
-                        document.querySelector(`.contract-${id}`).innerHTML = "Szerződés státusza: <strong class = 'text-danger'>Lejárt</strong>"
-                    }
-                        , players_used[i].get_contractleft() * 1000
-                    )
-                    timeouts.push(timeout)
-                }
-            }
-        }
-        else {
-            team_stats.innerHTML =
-                `
-                <p>Játékos a legtöbb góllal: ${players_used[max_goals].get_name()} (${games[viewed].get_stats_value("goals", max_goals)})</p>
-                `
-            for (let i = 0; i < players_used.length; i++) {
-                id = players_used[i].get_id()
-
-                output_accordion.innerHTML +=
-                    `
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed accordion-btn" type="button" onclick = "new_chart(${id})" data-bs-toggle="collapse"
-                        data-bs-target="#acc-${i}" aria-expanded="false" aria-controls="p-${i}">
-                        ${players_used[i].get_name()}  -  ${players_used[i].get_nick()}
-                    </button>
-                </h2>
-                <div id="acc-${i}" class="accordion-collapse collapse" data-bs-parent = ".output">
                     <div class="accordion-body p-3">
                         <button type="button" class="btn btn-warning" onclick = "start_edit(${i})">Szerződés szerkesztése</button>
                         <div class="row g-2">
                             <div class = "d-flex flex-row">
-                                <div class = "p-1 flex-grow-2">
+                                <div class = "p-2 flex-grow-1">
                                     <p class = "p-2 fw-bold">Goals: ${games[viewed].get_stats_value("goals", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['goals'], ${id})"></i></a></p>
                                     <p class = "p-2 fw-bold">Saves: ${games[viewed].get_stats_value("saves", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['saves'], ${id})"></i></a></p>
                                     <p class = "p-2 fw-bold">MVPs: ${games[viewed].get_stats_value("mvps", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['mvps'], ${id})"></i></a></p>
                                     <p class = "p-2">Assists: ${games[viewed].get_stats_value("assists", id)} <a href= "#toast-header"><i class = "px-2 bi bi-pencil-fill" onclick = "start_edit_stat(['assists'], ${id})"></i></a></p>
                                     <p class = "px-2 pt-5">Fizetés: ${players_used[i].get_pay()}/hó</p>
-                                    <p class = "p-2 contract-${id}">${players_used[i].get_contractleft() > 0 ? `Szerződés érvényes ${players_used[i].get_contracttime().toDateString()}-ig` : "<strong class = 'text-danger'>Lejárt</strong>"}</p>
+                                    <p class = "p-2 contract-${id}">Szerződés státusza: ${players_used[i].get_contractleft() > 0 ? `érvényes ${players_used[i].get_contracttime().toDateString()}-ig` : "<strong class = 'text-danger'>Lejárt</strong>"}</p>
                                 </div>
-                                <a href= "#toast-header" class = "px-1 py-3"><i class = "bi bi-pencil-fill" onclick = "start_edit_stat(['wins', 'matches'], ${id})"></a></i>
+                                <a href= "#toast-header" class = "px-1 py-3"><i class = "bi bi-pencil-fill" onclick = "start_edit_stat(['wins', 'matches'], ${id})"></i></a>
                                 <div class = "p-2 flex-grow-1"><canvas class = "chart-${id}"><canvas></div>
                             </div>
                         </div>
@@ -237,9 +334,10 @@ function write() {
             </div>
             `
 
-                if (players_used[i].get_contractleft() > 0) {
+                if (players_used[i].get_contractleft() > 0 && players_used[i].get_contractleft() < 2147483) {
                     var timeout = setTimeout(() => {
-                        document.querySelector(`.contract-${id}`).innerHTML = "Szerződés státusza: <strong class = 'text-danger'>Lejárt</strong>"
+                        document.querySelector(`.contract-${id}`).innerHTML = "<span class='badge text-bg-danger'>Lejárt</span>"
+                        update_badges()
                     }
                         , players_used[i].get_contractleft() * 1000
                     )
@@ -251,7 +349,31 @@ function write() {
 }
 write()
 
-// success toast helper (ai)
+
+// ai helperek
+function update_badges() {
+    var active = 0
+    for (let i = 0; i < players_used.length; i++) {
+        if (players_used[i].get_contractleft() > 0) {
+            active++
+        }
+    }
+    document.querySelector(".active-badge").textContent = `${active} aktív szerződés`
+    document.querySelector(".expired-badge").textContent = `${players_used.length - active} lejárt szerződés`
+}
+
+function update_roster() {
+    roster_count.textContent = `${players_used.length}/${max_roster[viewed]}`
+}
+
+function win_rate(id) {
+    var matches = games[viewed].get_stats_value("matches", id)
+    if (matches == 0) {
+        return 0
+    }
+    return Math.round(games[viewed].get_stats_value("wins", id) / matches * 100)
+}
+
 function show_toast(title, message, color) {
     toast_title.textContent = title
     toast_body.textContent = message
@@ -259,6 +381,32 @@ function show_toast(title, message, color) {
     toast_square.classList.add("bg-" + color)
     toast.show()
 }
+
+function used_budget() {
+    var sum = 0
+    for (let i = 0; i < players_used.length; i++) {
+        sum += players_used[i].get_pay()
+    }
+    return sum
+}
+
+function update_budget() {
+    var used = used_budget()
+    budget_text.textContent = `${Intl.NumberFormat().format(used)} Ft / ${Intl.NumberFormat().format(max_budget)} Ft`
+    budget_bar.style.width = Math.min(used / max_budget * 100, 100) + "%"
+}
+
+function is_budget_valid(old_pay) {
+    var free = max_budget - used_budget() + old_pay
+    var valid = Number(new_pay.value) <= free
+
+    budget_error.textContent = `Nem fér bele a keretbe! Legfeljebb ${Intl.NumberFormat().format(free)} Ft adható.`
+    budget_error.classList.toggle("d-block", !valid)
+
+    return valid
+}
+//
+
 
 function is_valid_input() {
     var name_valid = new_name.value.trim().length > 5
@@ -289,7 +437,7 @@ function next_id(players) {
 }
 
 function add_player() {
-    if (!is_valid_input()) {
+    if (!is_valid_input() || !is_budget_valid(0)) {
         return;
     } else {
         var date_parts = new_date.value.split("-");
@@ -353,11 +501,11 @@ function start_edit(index) {
     new_time.classList.remove("is-invalid")
 
     date_error.classList.remove("d-block")
-
+    budget_error.classList.remove("d-block")
 }
 
 function edit_player() {
-    if (!is_valid_input()) {
+    if (!is_valid_input() || !is_budget_valid(players_used[edit_index].get_pay())) {
         return;
     }
     else {
@@ -397,9 +545,9 @@ function start_edit_stat(values, index) {
     for (let i = 0; i < toast_input_values.length; i++) {
         toast_form.innerHTML +=
             `
-        <div class="p-2">
+        <div class="me-2 mb-3">
             <label>${toast_input_values[i]}</label>
-            <input type = "number" class = "form-control edit-${toast_input_values[i]}"></input>
+            <input type = "number" class = "form-control edit-${toast_input_values[i]}" value="${games[viewed].get_stats_value(toast_input_values[i], index)}">
             <div class="invalid-feedback"></div>
         </div>
         `
@@ -493,10 +641,14 @@ document.querySelector(".rocket_league_btn").addEventListener("click", () => {
 //add-modal
 rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
 rangeInput.addEventListener('input', () => {
-    rangeOutput.textContent = Intl.NumberFormat().format(this.value) + " Ft";
+    rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
 });
 
 document.querySelector(".add-modalbtn").addEventListener('click', () => {
+    if (players_used.length >= max_roster[viewed]) {
+        show_toast("Megtelt a keret!", `A ${games[viewed].get_name()} csapatban legfeljebb ${max_roster[viewed]} játékos lehet.`, "danger")
+        return
+    }
     new_name.value = new_nick.value = new_date.value = new_time.value = "";
     new_pay.value = 20000;
     add_modal.show();
@@ -505,6 +657,7 @@ document.querySelector(".add-modalbtn").addEventListener('click', () => {
     new_date.classList.remove("is-invalid")
     new_time.classList.remove("is-invalid")
     date_error.classList.remove("d-block")
+    budget_error.classList.remove("d-block")
 
     document.querySelector(".add-header").classList.remove("bg-warning")
     document.querySelector(".add-header").classList.add("bg-success")
