@@ -92,15 +92,23 @@ add_in_bulk(games[1], 0, [10, 12, 4, 1, 3, 3])
 add_in_bulk(games[1], 1, [11, 9, 7, 1, 3, 4])
 add_in_bulk(games[1], 2, [66, 34, 45, 9, 9, 9])
 
-//Nem használt de ha akarjuk feltudjuk használni egy keresőhöz pl
-function search_player(players, id) {
-    var index = -1
-    for (let i = 0; i < players.length; i++) {
-        if (players[i].get_id() == id) {
-            index = i
+function win_rate(id) {
+    var matches = games[viewed].get_stats_value("matches", id)
+    if (matches == 0) {
+        return 0
+    }
+    return Math.round(games[viewed].get_stats_value("wins", id) / matches * 100)
+}
+
+function team_win_rate(){
+    var win_rate_sum = 0
+    if(players_used.length > 0){
+        for(let i = 0; i < players_used.length; i++){
+            win_rate_sum += win_rate(players_used[i].get_id())
         }
     }
-    return index
+    console.log(win_rate_sum / players_used.length)
+    return Math.round(win_rate_sum / players_used.length)
 }
 
 //chart létrehozása, ha a felhasználó megnyitja az accordiont
@@ -151,7 +159,10 @@ function write() {
     var team_stats = document.querySelector(".output-stats")
 
     var max_kills = player_with_highest_value(0, "kills")
+    var max_spikes = player_with_highest_value(0, "spikes")
     var max_goals = player_with_highest_value(1, "goals")
+    var max_mvps = player_with_highest_value(1, "mvps")
+    win_rate_team = team_win_rate()
 
     team_stats.innerHTML = ""
     output_accordion.innerHTML = ""
@@ -162,6 +173,14 @@ function write() {
         empty_list_text.classList.remove('d-none');
         team_stats.innerHTML = "<p>Nincs adat!</p>"
     } else {
+
+        team_stats.innerHTML += (win_rate_team <= 0) ?
+            `<p class = "text-secondary">Még nincs win rate adat!</p>`
+            :
+            `
+            <p>Csapat win rate-je - <span class = "text-success fs-5">${win_rate_team} %</span></p>
+            `
+
         empty_list_text.classList.add('d-none')
         //Játéktól függően, accordion-item-ek hozzáadása
         output_accordion.innerHTML = `
@@ -178,12 +197,21 @@ function write() {
         }
         timeouts = []
         if (!viewed) {
-            team_stats.innerHTML = (max_kills == -1) ?
-                `<p>Még nincs adat!</p>`
+            
+            team_stats.innerHTML += (max_kills == -1) ?
+                `<p class = "text-secondary">Még nincs ölési adat!</p>`
                 :
                 `
-                <p>Játékos a legtöbb öléssel: ${players_used[max_kills].get_name()} (${games[viewed].get_stats_value("kills", max_kills)})</p>
+                <p>A leghalálosabb: ${players_used[max_kills].get_name()} - <span class = "text-success fs-5">${games[viewed].get_stats_value("kills", players_used[max_kills].get_id())}</span> kill(s)</p>
                 `
+
+            team_stats.innerHTML += (max_spikes == -1) ?
+                `<p class = "text-secondary">Még nincs spike telepítési adat!</p>`
+                :
+                `
+                <p>A legjobb telepítő: ${players_used[max_spikes].get_name()} - <span class = "text-success fs-5">${games[viewed].get_stats_value("spikes", players_used[max_spikes].get_id())}</span> spike telepítéssel</p>
+                `
+
             for (let i = 0; i < players_used.length; i++) {
                 let id = players_used[i].get_id()
 
@@ -300,12 +328,20 @@ function write() {
             }
         }
         else {
-            team_stats.innerHTML = (max_goals == -1) ?
-                `<p>Még nincs adat!</p>`
+
+            team_stats.innerHTML += (max_goals == -1) ?
+                `<p class = "text-secondary">Még nincs gól adat!</p>`
                 :
                 `
-                <p>Játékos a legtöbb góllal: ${players_used[max_goals].get_name()} (${games[viewed].get_stats_value("goals", max_goals)})</p>
+                <p>Az Aranycsapat új tagja: ${players_used[max_goals].get_name()} - <span class = "text-success fs-5">${games[viewed].get_stats_value("goals", players_used[max_goals].get_id())}</span> goal(s)</p>
                 `
+            team_stats.innerHTML += (max_mvps == -1) ?
+                `<p class = "text-secondary">Még nincs MVP adat!</p>`
+                :
+                `
+                <p>A Legértékesebb: ${players_used[max_mvps].get_name()} - <span class = "text-success fs-5">${games[viewed].get_stats_value("mvps", players_used[max_mvps].get_id())}</span>-szer lett MVP</p>
+                `
+
             for (let i = 0; i < players_used.length; i++) {
                 let id = players_used[i].get_id()
 
@@ -438,14 +474,6 @@ function update_badges() {
 
 function update_roster() {
     roster_count.textContent = `${ players_used.length }/${max_roster[viewed]}`
-            }
-
-            function win_rate(id) {
-                var matches = games[viewed].get_stats_value("matches", id)
-                if (matches == 0) {
-                    return 0
-                }
-                return Math.round(games[viewed].get_stats_value("wins", id) / matches * 100)
             }
 
             function show_toast(title, message, color) {
@@ -692,18 +720,18 @@ function edit_stat() {
                 show_toast("Szerződés felbontva!", `${players_used[deleteID].get_name()} szerződése törlődött.`, "danger");
                 if (!viewed) {
 
-                    delete_in_bulk(games[0], "kills", players_used[deleteID].get_id())
+                    delete_in_bulk(games[0], players_used[deleteID].get_id())
                     valorant_players.splice(deleteID, 1)
 
+                    console.log(games[0].get_stats())
                     players_used = valorant_players.slice();
-                    max_kills = player_with_highest_value(viewed, "kills")
+                    console.log(players_used)
                 } else {
 
-                    delete_in_bulk(games[1], "goals", players_used[deleteID].get_id())
+                    delete_in_bulk(games[1], players_used[deleteID].get_id())
                     rocket_league_players.splice(deleteID, 1)
 
                     players_used = rocket_league_players.slice();
-                    max_goals = player_with_highest_value(viewed, "goals")
                 }
                 write();
 
@@ -758,7 +786,7 @@ function edit_stat() {
 
 
 
-            document.querySelector(".sim-modalbtn").addEventListener("click", () => {
+document.querySelector(".sim-modalbtn").addEventListener("click", () => {
     in_simulation = 0
     sim_modal.show()
 
@@ -786,8 +814,6 @@ function edit_stat() {
 
 })
 
-            })
-
             //szimuláció indítása
             document.querySelector(".sim-btn").addEventListener("click", () => {
 
@@ -807,15 +833,15 @@ function edit_stat() {
                 var id = -1
                 var wins = 0
                 if (input_len <= games[viewed].get_max_players_in_round()) {
-                    wins = Math.floor(Math.random() * (0.53 * input_len))
+                    wins = Math.floor(Math.random() * (0.51 * input_len))
                     for (let i = 0; i < input_len; i++) {
                         id = Number.parseInt(inputs[i].value)
                         if (!viewed) {
 
                             add_in_bulk(games[0], id, [
-                                games[0].get_stats_value("kills", id) + Math.floor(Math.random() * (6.2 * input_len)),
-                                games[0].get_stats_value("assists", id) + Math.floor(Math.random() * (6.2 * input_len)),
-                                games[0].get_stats_value("deaths", id) + Math.floor(Math.random() * (125 / input_len)),
+                                games[0].get_stats_value("kills", id) + Math.floor(Math.random() * (6.5 * input_len)),
+                                games[0].get_stats_value("assists", id) + Math.floor(Math.random() * (6.5 * input_len)),
+                                games[0].get_stats_value("deaths", id) + Math.floor(Math.random() * (80 / input_len)),
                                 games[0].get_stats_value("spikes", id) + Math.floor(Math.random() * (1.5 * input_len)),
                                 games[0].get_stats_value("defuses", id) + Math.floor(Math.random() * (1.5 * input_len)),
                                 games[0].get_stats_value("wins", id) + wins,
