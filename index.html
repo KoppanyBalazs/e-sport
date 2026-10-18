@@ -13,7 +13,7 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid">
+            <div class="container">
                 <a class="navbar-brand" href="#">
                     <img src="egyeb/logo.svg" alt="Bootstrap" width="30" height="24">
                 </a>
@@ -35,63 +35,67 @@
             </div>
         </nav>
     </header>
-    <main class="container">
+    <main>
         <section>
-            <div class="row">
-                <div class="col col-lg-4 col-sm-12 g-4">
-                    <div class="border rounded shadow p-4 mb-3">
-                        <div class="mb-3 text-center">
-                            <img src="egyeb/logo.svg" alt="" height="120px">
-                        </div>
-                        <h1 class="text-center fw-bold">Prime</h1>
-                        <h5 class="text-center">Valorant & Rocket League Team</h5>
-                        <p class="text-center fw-light">A legjobb Bronze játékosok csapata</p>
-                    </div>
-                    <div class="border rounded shadow p-4 my-3">
-                        <h3>Csapat statisztikák</h3>
-                        <div class="pt-3 output-stats"></div>
-                    </div>
-                    <div class="border rounded shadow p-4 mb-3">
-                        <h3 class="mb-4">Csapatkezelő</h3>
-                        <p class="d-flex justify-content-between fw-bold">
-                            <span>Keret</span>
-                            <span class="roster-count"></span>
-                        </p>
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between flex-wrap column-gap-3 fw-bold mb-1">
-                                <span>Költségvetés</span>
-                                <span class="budget-text text-nowrap"></span>
+            <div class="container my-4">
+                <div class="row g-3">
+                    <div class="col col-lg-4 col-sm-12">
+                        <div class="border rounded shadow p-4 mb-3">
+                            <div class="mb-3 text-center">
+                                <img src="egyeb/logo.svg" alt="" height="120">
                             </div>
-                            <div class="progress" role="progressbar" aria-label="Felhasznált költségvetés">
-                                <div class="progress-bar bg-success budget-bar"></div>
-                            </div>
+                            <h1 class="text-center fw-bold">Prime</h1>
+                            <h5 class="text-center">Valorant & Rocket League Team</h5>
+                            <p class="text-center text-secondary fw-light">A legjobb Bronze játékosok csapata</p>
                         </div>
-                        <button type="button" class="btn btn-success w-100 mb-2 add-modalbtn">Játékos igazolás</button>
-                        <button type="button" class="btn btn-secondary w-100 mb-2 sim-modalbtn">Meccs
-                            szimulálás</button>
+                        <div class="border rounded shadow p-4 my-3">
+                            <h3>Csapat statisztikák</h3>
+                            <div class="pt-3 output-stats"></div>
+                        </div>
+                        <div class="border rounded shadow p-4 mb-3">
+                            <h3 class="mb-4">Csapatkezelő</h3>
+                            <p class="d-flex justify-content-between fw-bold">
+                                <span>Keret</span>
+                                <span class="roster-count"></span>
+                            </p>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between flex-wrap column-gap-3 fw-bold mb-1">
+                                    <span>Költségvetés</span>
+                                    <span class="budget-text text-nowrap"></span>
+                                </div>
+                                <div class="progress" role="progressbar" aria-label="Felhasznált költségvetés">
+                                    <div class="progress-bar bg-success budget-bar"></div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-success w-100 mb-2 add-modalbtn">Játékos
+                                igazolás</button>
+                            <button type="button" class="btn btn-secondary w-100 mb-2 sim-modalbtn">Meccs
+                                szimulálás</button>
+                        </div>
                     </div>
-                </div>
-                <div class="col col-lg-8 col-sm-12 g-4">
+                    <div class="col col-lg-8 col-sm-12">
 
-                    <div class="border rounded shadow p-3">
-                        <div aria-live="polite" aria-atomic="true"
-                            class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
-                            <div class="toast" id="live-toast" role="alert" aria-live="assertive" aria-atomic="true">
-                                <div class="toast-header" id="toast-header">
-                                    <strong class="me-auto">Érték módosítása</strong>
-                                    <button type="button" class="btn-close" data-bs-dismiss="toast"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="toast-body">
-                                    <form class="toast-form d-flex"></form>
-                                    <button type="button" class="btn btn-warning" onclick="edit_stat()">Adat(ok)
-                                        módosítása</button>
+                        <div class="border rounded shadow p-4">
+                            <div aria-live="polite" aria-atomic="true"
+                                class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+                                <div class="toast" id="live-toast" role="alert" aria-live="assertive"
+                                    aria-atomic="true">
+                                    <div class="toast-header" id="toast-header">
+                                        <strong class="me-auto">Érték módosítása</strong>
+                                        <button type="button" class="btn-close" data-bs-dismiss="toast"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="toast-body">
+                                        <form class="toast-form d-flex"></form>
+                                        <button type="button" class="btn btn-warning" onclick="edit_stat()">Adat(ok)
+                                            módosítása</button>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="accordion output"></div>
+                            <p class="my-3 fs-4 text-center text-secondary d-none empty_list">Jelenleg nincsen játékos
+                                leszerződve a csapatba!</p>
                         </div>
-                        <div class="accordion output"></div>
-                        <p class="my-3 fs-4 text-center text-secondary d-none empty_list">Jelenleg nincsen játékos
-                            leszerződve a csapatba!</p>
                     </div>
                 </div>
             </div>
@@ -104,7 +108,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-success add-header">
-                    <h5 class="modal-title text-white">Új játékos igazolása</h5>
+                    <h5 class="modal-title">Új játékos igazolása</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">

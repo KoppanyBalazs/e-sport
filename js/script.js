@@ -9,7 +9,7 @@ const valorant_players = [
     new Player("Lejárt János", "janika", 1, 30_000, games[0], new Date(2025, 9, 19, 23, 30, 0, 0)),
     new Player("Kincses Ádám", "xxx_kincses_xxx", 2, 550_000, games[0], new Date(2028, 5, 15, 15, 15, 0, 0)),
     new Player("Ferenc József", "austrianking223", 3, 125_001, games[0], new Date(2026, 9, 25, 24, 0, 0, 0)),
-    new Player("Koppány Félix", "Cpt. Meatballz", 4, 1_000_000, games[0], new Date(2035, 0, 1, 0, 0, 0, 0))]
+    new Player("Koppány Félix", "Cpt_Meatballz", 4, 1_000_000, games[0], new Date(2035, 0, 1, 0, 0, 0, 0))]
 const rocket_league_players = [
     new Player("Nagy Feró", "nyolc_ora_munka", 0, 100_000, games[1], new Date(2026, 9, 19, 23, 30, 0, 0)),
     new Player("Gregor Bence", "kolbi", 1, 1, games[1], new Date(2075, 11, 31, 24, 59, 0, 0)),
@@ -167,8 +167,10 @@ function write() {
         output_accordion.innerHTML = `
         <div class="d-flex align-items-center gap-3 mb-3">
             <h3 class="m-0">${games[viewed].get_name()} csapat</h3>
-            <span class="badge text-bg-success active-badge ms-auto"></span>
-            <span class="badge text-bg-danger expired-badge"></span>
+            <div class="d-flex flex-column flex-lg-row align-items-end gap-1 ms-auto flex-shrink-0">
+                <span class="badge text-bg-success active-badge ms-auto"></span>
+                <span class="badge text-bg-danger expired-badge"></span>
+            </div>
         </div>`
         update_badges()
         for (let i = 0; i < timeouts.length; i++) {
@@ -605,6 +607,11 @@ function update_roster() {
                     rangeOutput.textContent = Intl.NumberFormat().format(rangeInput.value) + " Ft";
                 }
             }
+document.addEventListener("click", (e) => {
+    if (toast_input_live.classList.contains("show") && !toast_input_live.contains(e.target) && !e.target.closest(".bi-pencil-fill")) {
+        toast_input.hide()
+    }
+})
 
             function start_edit_stat(values, index) {
                 toast_input_values = values
@@ -627,33 +634,34 @@ function update_roster() {
 
             }
 
-            function edit_stat() {
-                var toast_inputfield = NaN
-                var valid = true
-                for (let i = 0; i < toast_input_values.length; i++) {
-                    toast_inputfield = document.querySelector(`.edit-${toast_input_values[i]}`)
-                    toast_inputfield.classList.remove("is-invalid")
+function edit_stat() {
+    var toast_inputfield = NaN
+    var valid = true
+    for (let i = 0; i < toast_input_values.length; i++) {
+        toast_inputfield = document.querySelector(`.edit-${toast_input_values[i]}`)
+        toast_inputfield.classList.remove("is-invalid")
 
-                    if (Number.parseInt(toast_inputfield.value) < 0 || Number.parseInt(toast_inputfield.value) > 1000) {
-                        valid = false
-                        toast_inputfield.classList.add("is-invalid")
-                        document.querySelector(".invalid-feedback").innerHTML = "Nem adhatsz meg 0-nál kisebb vagy 1000-nél nagyobb értéket!"
-                    }
-                    else if (toast_input_values.length == 2 && toast_input_values[0] == "wins" &&
-                        Number.parseInt(document.querySelector(`.edit-${toast_input_values[0]}`).value) > Number.parseInt(toast_inputfield.value)) {
-                        valid = false
-                        document.querySelector(`.edit-${toast_input_values[0]}`).classList.add("is-invalid")
-                        document.querySelector(".invalid-feedback").innerHTML = "Nem lehet a győzelmek száma nagyobb mint a meccseké!"
-                    }
-                    else if (valid) {
-                        games[viewed].add_stat_value(toast_input_values[i], edit_stat_index, Number.parseInt(toast_inputfield.value))
-                    }
-                }
+        if (Number.parseInt(toast_inputfield.value) < 0 || Number.parseInt(toast_inputfield.value) > 1000) {
+            valid = false
+            toast_inputfield.classList.add("is-invalid")
+            document.querySelector(".invalid-feedback").innerHTML = "Nem adhatsz meg 0-nál kisebb vagy 1000-nél nagyobb értéket!"
+        }
+        else if (toast_input_values.length == 2 && toast_input_values[0] == "wins" &&
+            Number.parseInt(document.querySelector(`.edit-${toast_input_values[0]}`).value) > Number.parseInt(toast_inputfield.value)) {
+            valid = false
+            document.querySelector(`.edit-${toast_input_values[0]}`).classList.add("is-invalid")
+            document.querySelector(".invalid-feedback").innerHTML = "Nem lehet a győzelmek száma nagyobb mint a meccseké!"
+        }
+    }
 
-                if (valid) {
-                    toast_input.hide()
-                    write()
-                }
+    if (valid) {
+        for (let i = 0; i < toast_input_values.length; i++) {
+            var field = document.querySelector(`.edit-${toast_input_values[i]}`)
+            games[viewed].add_stat_value(toast_input_values[i], edit_stat_index, Number.parseInt(field.value))
+        }
+        toast_input.hide()
+        write()
+    }
 
             }
 
@@ -751,27 +759,32 @@ function update_roster() {
 
 
             document.querySelector(".sim-modalbtn").addEventListener("click", () => {
+    in_simulation = 0
+    sim_modal.show()
 
-                sim_modal.show()
+    var inputs = document.querySelector(".sim-inputs")
+    inputs.innerHTML = `<p class="text-secondary">Válaszd ki a meccsen játszó játékosokat (legfeljebb ${games[viewed].get_max_players_in_round()}):</p>`
 
-                var inputs = document.querySelector(".sim-inputs")
-                inputs.innerHTML = ""
+    for (let i = 0; i < players_used.length; i++) {
+        if (players_used[i].get_contractleft() != "Lejárt") {
+            in_simulation++
+            inputs.innerHTML +=
+                        `
+                        <label class="sim-row d-flex flex-wrap align-items-center gap-3 border rounded p-3 mb-2">
+                            <div>
+                                <div class="fw-bold">${players_used[i].get_name()}</div>
+                                <div class="small text-secondary">${players_used[i].get_nick()}</div>
+                            </div>
+                            <input type="checkbox" value="${players_used[i].get_id()}"
+                                class="index-${in_simulation - 1} form-check-input ms-auto m-0">
+                            <div class="invalid-feedback w-100">Több játékos mint
+                                ${games[viewed].get_max_players_in_round()}!</div>
+                        </label>
+                        `
+        }
+    }
 
-                for (let i = 0; i < players_used.length; i++) {
-                    if (players_used[i].get_contractleft() != "Lejárt") {
-                        in_simulation++
-                        inputs.innerHTML +=
-                            `
-            <div class = "p-2 d-flex flex-row flex-wrap justify-content-center form-check">
-                <p class = "p-2 flex-grow-1">${i + 1}. Játékos:</p>
-                <p class = "p-2 flex-grow-1">${players_used[i].get_nick()}</p>
-                <p class = "p-2 flex-grow-1">Játszott:</p>
-                <input type = "checkbox" value = "${i}" class = "index-${in_simulation - 1} form-check-input mx-1 m-2">
-                <div class="invalid-feedback w-100 p-1">Több játékos mint ${games[viewed].get_max_players_in_round()}!</div>
-            </div>
-            `
-                    }
-                }
+})
 
             })
 
